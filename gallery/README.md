@@ -20,7 +20,7 @@ This is a modern, interactive 3D wedding photo gallery built with Next.js, React
   - Supports separate dynamic albums: **3D Wedding Album** and **3D Reception Album**.
   - Renders dynamically from Cloudflare R2 based on route search parameters.
   - Pages are loaded asynchronously inside React `<Suspense>` boundaries.
-  - 3D Carousel cards feature elegant bottom details overlays displaying formatted image titles and subtitle badges.
+  - 3D Carousel cards feature elegant bottom details overlays displaying formatted image titles and subtitle badges, now with enhanced padding and spacing.
 - **Optimized Texture Loading:** Custom texture queuing system to manage concurrent loading and cache memory for high-resolution images.
 
 ### Asset Management & CDN Integration (Cloudflare R2)

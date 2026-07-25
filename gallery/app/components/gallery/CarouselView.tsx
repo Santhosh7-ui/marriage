@@ -92,11 +92,11 @@ export default function CarouselView({ photos, selectedIndex, onSelect }: Carous
 
               {/* Centered Photo Details overlay at the bottom of the active card */}
               {isCenter && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent p-8 sm:p-10 z-20">
-                  <h3 className="text-lg sm:text-2xl font-serif text-white tracking-wide uppercase">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent p-12 sm:p-16 pb-14 sm:pb-20 z-20 flex flex-col items-center text-center">
+                  <h3 className="text-xl sm:text-3xl font-serif text-white tracking-wide uppercase px-4">
                     {photoKey.split('/').pop()?.split('.').shift()?.replace(/_/g, ' ') || 'Wedding Moment'}
                   </h3>
-                  <p className="text-[10px] sm:text-xs text-[#d4af37] font-semibold tracking-widest uppercase mt-2">
+                  <p className="text-xs sm:text-sm text-[#d4af37] font-semibold tracking-[0.3em] uppercase mt-4">
                     Santhosh & Ambika
                   </p>
                 </div>
