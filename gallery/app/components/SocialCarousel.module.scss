@@ -1,0 +1,249 @@
+@use '../../styles/abstracts/colors' as c;
+@use '../../styles/abstracts/radius' as r;
+@use '../../styles/abstracts/spacing' as s;
+@use '../../styles/abstracts/typography' as t;
+@use '../../styles/abstracts/animations' as a;
+
+.carouselWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: s.$space-32 s.$space-16;
+  width: 100%;
+}
+
+.postCard {
+  width: 100%;
+  max-width: 470px;
+  background: c.$white;
+  border-radius: r.$radius-lg;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+// ── Header ──────────────────────────────────────────────────
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: s.$space-16;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: s.$space-12;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  padding: 2px; // for the ring effect
+  
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid c.$white;
+    object-fit: cover;
+  }
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: t.$fw-bold;
+  font-size: 0.875rem;
+  color: #262626;
+}
+
+.location {
+  font-size: 0.75rem;
+  color: #8e8e8e;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: s.$space-12;
+}
+
+.followBtn {
+  font-weight: t.$fw-semibold;
+  font-size: 0.875rem;
+  color: #0095f6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  
+  &:hover {
+    color: #00376b;
+  }
+}
+
+.moreIcon {
+  cursor: pointer;
+  color: #262626;
+}
+
+// ── Image Slider ─────────────────────────────────────────────
+.sliderContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5; // Instagram portrait aspect ratio
+  overflow: hidden;
+  background: #f8f8f8;
+}
+
+.sliderTrack {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.slide {
+  min-width: 100%;
+  height: 100%;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+}
+
+// ── Navigation Controls ──────────────────────────────────────
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 10;
+  transition: all 0.2s ease;
+  color: #262626;
+
+  &:hover {
+    background: c.$white;
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+}
+
+.prevBtn {
+  left: s.$space-8;
+}
+
+.nextBtn {
+  right: s.$space-8;
+}
+
+.slideIndicator {
+  position: absolute;
+  top: s.$space-16;
+  right: s.$space-16;
+  background: rgba(0,0,0,0.6);
+  color: c.$white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: t.$fw-medium;
+  z-index: 10;
+}
+
+// ── Footer / Actions ────────────────────────────────────────
+.footer {
+  padding: s.$space-16;
+}
+
+.actionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: s.$space-12;
+}
+
+.actionIcons {
+  display: flex;
+  gap: s.$space-16;
+  
+  svg {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+}
+
+.likes {
+  font-weight: t.$fw-bold;
+  font-size: 0.875rem;
+  color: #262626;
+  margin-bottom: s.$space-8;
+}
+
+.caption {
+  font-size: 0.875rem;
+  color: #262626;
+  line-height: 1.4;
+  margin-bottom: s.$space-8;
+  
+  .username {
+    margin-right: s.$space-8;
+  }
+}
+
+.time {
+  font-size: 0.75rem;
+  color: #8e8e8e;
+  text-transform: uppercase;
+}
+
+// ── Dots ─────────────────────────────────────────────────────
+.dotsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: s.$space-8 0;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a8a8a8;
+  transition: all 0.2s ease;
+  
+  &.active {
+    background: #0095f6;
+    transform: scale(1.2);
+  }
+}
