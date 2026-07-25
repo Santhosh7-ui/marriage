@@ -60,14 +60,18 @@ export default function GlimpsesGallery() {
     // Title entrance — targets global .glimpses-title class
     gsap.fromTo('.glimpses-title',
       { opacity: 0, y: 50, filter: 'blur(6px)' },
-      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.4, ease: 'power4.out',
-        scrollTrigger: { trigger: '.glimpses-title', start: 'top 85%', toggleActions: 'play none none none' } }
+      {
+        opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.4, ease: 'power4.out',
+        scrollTrigger: { trigger: '.glimpses-title', start: 'top 85%', toggleActions: 'play none none none' }
+      }
     );
 
     gsap.fromTo('.glimpses-ornament',
       { scaleX: 0, opacity: 0 },
-      { scaleX: 1, opacity: 1, duration: 1.2, ease: 'power4.out',
-        scrollTrigger: { trigger: '.glimpses-ornament', start: 'top 88%', toggleActions: 'play none none none' } }
+      {
+        scaleX: 1, opacity: 1, duration: 1.2, ease: 'power4.out',
+        scrollTrigger: { trigger: '.glimpses-ornament', start: 'top 88%', toggleActions: 'play none none none' }
+      }
     );
 
     // Cards stagger — targets global .glimpse-card class
@@ -103,7 +107,7 @@ export default function GlimpsesGallery() {
         <div className="glimpses-ornament">
           <div className={styles.ornamentLine} />
           <svg width="16" height="16" viewBox="0 0 24 24" fill="#d4af37" opacity="0.75">
-            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
           </svg>
           <div className={`${styles.ornamentLine} ${styles['ornamentLine--right']}`} />
         </div>
@@ -169,7 +173,7 @@ export default function GlimpsesGallery() {
       <div className={styles.bottomOrnament}>
         <div className={styles.bottomLine} />
         <svg width="12" height="12" viewBox="0 0 24 24" fill="#d4af37">
-          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
         </svg>
         <div className={`${styles.bottomLine} ${styles['bottomLine--right']}`} />
       </div>

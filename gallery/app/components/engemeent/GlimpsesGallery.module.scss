@@ -19,16 +19,17 @@
 // ── Section wrapper ──────────────────────────────────────
 .section {
   width: 100%;
-  background: c.$bg;
-  margin: s.$space-64 0;
+  background: #f5f5f7;
+  margin-top: s.$space-64;
+  margin-bottom: 0;
   padding: s.$space-112 s.$space-16;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
   @include m.sm-up {
     padding: s.$space-112 s.$space-40;
@@ -84,7 +85,7 @@
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(0, 0, 0, 0.5);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   font-size: 0.75rem;
@@ -148,8 +149,8 @@
   cursor: pointer;
   position: relative;
   padding: 10px;
-  background: c.$bg-card;
-  box-shadow: sh.$shadow-card;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
   border: 1px solid rgba(212, 175, 55, 0.18);
 
   @include m.desktop {
@@ -252,6 +253,72 @@
   bottom: -12px;
   right: -12px;
   z-index: 30;
+  background: #ffffff;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: s.$space-2 s.$space-8;
+}
+
+.pageTagLabel {
+  color: rgba(212, 175, 55, 0.6);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  font-weight: t.$fw-semibold;
+  text-transform: uppercase;
+}
+
+// ── CTA ──────────────────────────────────────────────────
+.cta {
+  margin-top: s.$space-128;
+  margin-bottom: s.$space-32;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: s.$space-20;
+}
+
+.ctaHint {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 0.625rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+// ── Bottom ornament ───────────────────────────────────────
+.bottomOrnament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: s.$space-16;
+  margin-top: s.$space-64;
+  opacity: 0.25;
+}
+
+.bottomLine {
+  height: 1px;
+  width: 7rem;
+  background: linear-gradient(to right, transparent, c.$gold);
+
+  &--right {
+    background: linear-gradient(to left, transparent, c.$gold);
+  }
+}
+
+.hoverLabel {
+  display: block;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.625rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+}
+
+// ── Page number tag ───────────────────────────────────────
+.pageTag {
+  position: absolute;
+  bottom: -12px;
+  right: -12px;
+  z-index: 30;
   background: c.$bg;
   border: 1px solid rgba(212, 175, 55, 0.3);
   padding: s.$space-2 s.$space-8;
@@ -266,6 +333,29 @@
 }
 
 // ── CTA ──────────────────────────────────────────────────
+.blueButton {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: #fff;
+  border: 1px solid rgba(37, 99, 235, 0.4);
+  border-radius: 2px;
+  cursor: pointer;
+  font-weight: t.$fw-semibold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all a.$transition-fast a.$ease-smooth;
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.2);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
 .cta {
   margin-top: s.$space-128;
   margin-bottom: s.$space-32;

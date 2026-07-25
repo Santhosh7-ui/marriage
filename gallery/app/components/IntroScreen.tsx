@@ -79,8 +79,8 @@ export default function IntroScreen() {
             transition={{ duration: 1.5, delay: 0.5 }}
             className={styles.heroTitle}
           >
-            Santhosh <br/>
-            <span className={styles.heroAmpersand}>&</span> <br/>
+            Santhosh <br />
+            <span className={styles.heroAmpersand}>&</span> <br />
             Ambika
           </motion.h1>
 
