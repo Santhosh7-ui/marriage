@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import AntigravityLogo from './AntigravityLogo';
 
 interface NavigationProps {
   title: string;
@@ -42,11 +43,8 @@ export default function Navigation({ title, viewMode, setViewMode, isGallery }: 
         {/* Desktop View */}
         <div className="hidden md:flex items-center w-full justify-between">
           {/* Logo / Brand (Left) */}
-          <Link 
-            href="/" 
-            className="text-lg md:text-xl font-serif uppercase tracking-[0.25em] text-white hover:text-gray-300 transition-colors font-semibold"
-          >
-            Santhosh <span className="text-gray-400 italic">&amp;</span> Ambika
+          <Link href="/">
+            <AntigravityLogo />
           </Link>
 
           {/* Centered Navigation Links (Center) */}
