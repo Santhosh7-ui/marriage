@@ -7,18 +7,20 @@ This is a modern, interactive 3D wedding photo gallery built with Next.js, React
 ### Technology Stack
 - **Framework:** Next.js 16 (App Router) & React 19
 - **3D Rendering:** Three.js, React Three Fiber (`@react-three/fiber`), and React Three Drei (`@react-three/drei`)
-- **Styling:** Tailwind CSS v4
+- **Styling:** Tailwind CSS v4 & Vanilla CSS
 
-### 3D Gallery Features
-- **Dynamic Layout Modes:** The gallery supports 6 distinct 3D spatial layouts for viewing photos:
-  - `constellation`
-  - `editorial`
-  - `filmFlow`
-  - `orbit`
-  - `tunnel`
-  - `stack`
-- **Interactive Controls:** Includes a custom `CameraController` for smooth 3D navigation and a `DisplayStyleSelector` to transition seamlessly between layout modes.
-- **Intro Animation:** Features a unique `QuillingIntro` sequence before entering the main gallery.
+### 3D Gallery & Navigation Features
+- **Dynamic View Modes:** Seamlessly switch between a custom CSS 3D Carousel and a Curved Filmstrip view.
+- **Redesigned Navigation Header:**
+  - Modern, spacious design with fixed height (`h-24 md:h-28`) and perfect vertical alignment.
+  - Active navigation links highlighted with a vibrant **neon gold glow** (`#d4af37` text-shadow).
+  - Hovering over nav items triggers the same high-end neon gold glow transition.
+  - Interactive white pill action button dynamically changes action based on context (e.g. toggling carousel/curved mode, returning to gallery, or entering).
+- **Interactive Multi-Album Support:**
+  - Supports separate dynamic albums: **3D Wedding Album** and **3D Reception Album**.
+  - Renders dynamically from Cloudflare R2 based on route search parameters.
+  - Pages are loaded asynchronously inside React `<Suspense>` boundaries.
+  - 3D Carousel cards feature elegant bottom details overlays displaying formatted image titles and subtitle badges.
 - **Optimized Texture Loading:** Custom texture queuing system to manage concurrent loading and cache memory for high-resolution images.
 
 ### Asset Management & CDN Integration (Cloudflare R2)
