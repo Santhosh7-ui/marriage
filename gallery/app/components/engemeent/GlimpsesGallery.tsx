@@ -89,7 +89,7 @@ export default function GlimpsesGallery() {
   return (
     <div
       ref={sectionRef}
-      className="w-full bg-[#080808] py-28 px-4 sm:px-10 lg:px-20 xl:px-32 2xl:px-48 flex flex-col items-center relative overflow-hidden border-t border-white/5"
+      className="w-full bg-[#080808] my-16 py-28 px-4 sm:px-10 lg:px-20 xl:px-32 2xl:px-48 flex flex-col items-center relative overflow-hidden border-t border-b border-white/5"
     >
       {/* Ambient gold glow */}
       <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] opacity-[0.07]"
@@ -169,14 +169,14 @@ export default function GlimpsesGallery() {
       </div>
 
       {/* CTA */}
-      <div className="mt-24 relative z-10 flex flex-col items-center gap-4">
+      <div className="mt-32 mb-8 relative z-10 flex flex-col items-center gap-5">
         <button
           onClick={() => router.push('/album')}
-          className="btn-3d text-base sm:text-lg px-10 py-4 shadow-[0_0_30px_rgba(212,175,55,0.3)]"
+          className="btn-3d text-base sm:text-lg px-12 py-5 shadow-[0_0_30px_rgba(212,175,55,0.3)]"
         >
           Explore Full Album
         </button>
-        <p className="text-white/20 text-[10px] tracking-[0.35em] uppercase mt-1">48 memories await</p>
+        <p className="text-white/20 text-[10px] tracking-[0.35em] uppercase">48 memories await</p>
       </div>
 
       {/* Bottom ornament */}

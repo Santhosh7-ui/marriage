@@ -80,14 +80,14 @@ export default function Navigation({ title, viewMode, setViewMode, isGallery }: 
             {pillAction ? (
               <button
                 onClick={pillAction}
-                className="px-7 py-3 bg-white text-black font-bold text-[11px] uppercase tracking-[0.15em] rounded-full hover:bg-gray-200 active:scale-95 transition-all shadow-md cursor-pointer"
+                className="px-8 py-3.5 bg-white text-black font-bold text-[12px] uppercase tracking-[0.18em] rounded-full hover:bg-gray-200 active:scale-95 transition-all shadow-md cursor-pointer"
               >
                 {pillLabel}
               </button>
             ) : (
               <Link
                 href={pillHref}
-                className="px-7 py-3 bg-white text-black font-bold text-[11px] uppercase tracking-[0.15em] rounded-full hover:bg-gray-200 active:scale-95 inline-block text-center transition-all shadow-md cursor-pointer"
+                className="px-8 py-3.5 bg-white text-black font-bold text-[12px] uppercase tracking-[0.18em] rounded-full hover:bg-gray-200 active:scale-95 inline-block text-center transition-all shadow-md cursor-pointer"
               >
                 {pillLabel}
               </Link>
