@@ -8,6 +8,7 @@ import SplitType from 'split-type';
 import Lenis from 'lenis';
 import { initAnimations } from './animations';
 import Navigation from '@/app/components/Navigation';
+import GlimpsesGallery from './GlimpsesGallery';
 
 export default function CinematicIntro() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -132,42 +133,9 @@ export default function CinematicIntro() {
       {/* Removed middle sections per user request */}
 
       {/* ═══════════════════════════════════════════════
-           TEASER GALLERY SECTION
+           TEASER GALLERY SECTION — Luxury Framed
       ═══════════════════════════════════════════════ */}
-      <div className="w-full bg-[#080808] py-24 px-4 sm:px-8 flex flex-col items-center relative z-10 border-t border-white/10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-5xl font-serif text-[#d4af37] tracking-widest mb-4">Glimpses of Forever</h2>
-          <p className="text-gray-400 tracking-[0.2em] uppercase text-sm sm:text-base">A sneak peek into our wedding album</p>
-        </div>
-
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 w-full max-w-[1400px] space-y-6">
-          {[1, 2, 4, 7, 10, 14, 18, 22, 25, 28, 31, 36].map((pageNum) => (
-            <div
-              key={pageNum}
-              className="break-inside-avoid relative group cursor-pointer rounded-lg overflow-hidden border border-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
-            >
-              <img
-                src={`/api/image?key=album/page_${String(pageNum).padStart(3, '0')}.jpg`}
-                alt={`Wedding Moment ${pageNum}`}
-                className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                <span className="text-[#d4af37] font-serif tracking-widest">Page {pageNum}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-        
-        <div className="mt-20">
-          <button 
-            onClick={() => router.push('/album')}
-            className="btn-3d text-lg px-8 py-4 shadow-[0_0_20px_rgba(212,175,55,0.4)]"
-          >
-            Explore Full Album
-          </button>
-        </div>
-      </div>
+      <GlimpsesGallery />
 
       {/* ═══════════════════════════════════════════════
            FOOTER
