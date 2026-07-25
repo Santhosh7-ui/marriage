@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1024" />
+  <title>Santhosh ❤️ Ambika — Engagement Invitation</title>
+  <meta name="description"
+    content="Join us as Santhosh and Ambika begin their forever journey. Save the date: 22.03.2026" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500&family=Inter:wght@300;400&family=Great+Vibes&display=swap"
+    rel="stylesheet" />
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/split-type"></script>
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       BACKGROUND EFFECTS
+  ═══════════════════════════════════════════════ -->
+  <div class="bg-glow-container" aria-hidden="true">
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+    <div class="ambient-glow ambient-glow-3"></div>
+  </div>
+
+
+
+  <!-- ═══════════════════════════════════════════════
+       CURSOR GLOW
+  ═══════════════════════════════════════════════ -->
+
+  <!-- ═══════════════════════════════════════════════
+       GRAIN OVERLAY
+  ═══════════════════════════════════════════════ -->
+  <div class="grain-overlay" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════════════════════════
+       FLOATING PARTICLES
+  ═══════════════════════════════════════════════ -->
+  <div class="particles-container" id="particles" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════════════════════════
+       PARTICLE HERO SECTION
+  ═══════════════════════════════════════════════ -->
+  <section class="particle-hero" id="particleHero">
+    <div class="glow-orb glow-orb--gold" aria-hidden="true"></div>
+    <div class="glow-orb glow-orb--lavender" aria-hidden="true"></div>
+    <canvas id="particleCanvas" class="particle-canvas is-active"></canvas>
+
+    <!-- Initial scroll hint -->
+    <div class="scroll-cue is-fixed-cue" aria-label="Scroll to explore">
+      <span class="scroll-cue__line"></span>
+      <span class="scroll-cue__label">Scroll</span>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       HERO SECTION (CINEMATIC TEXT)
+  ═══════════════════════════════════════════════ -->
+  <section class="hero" id="hero">
+    <!-- Animated background SVG lines -->
+    <svg class="hero-bg-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <line class="svg-line" x1="0" y1="450" x2="1440" y2="450" />
+      <line class="svg-line" x1="720" y1="0" x2="720" y2="900" />
+      <circle class="svg-circle" cx="720" cy="450" r="300" />
+      <circle class="svg-circle svg-circle--outer" cx="720" cy="450" r="420" />
+    </svg>
+
+    <!-- Gradient glow orbs -->
+    <div class="glow-orb glow-orb--gold" aria-hidden="true" style="opacity: 0.02;"></div>
+    <div class="glow-orb glow-orb--lavender" aria-hidden="true" style="opacity: 0.02;"></div>
+
+    <!-- Hero text sequence container -->
+    <div class="hero-content" id="heroContent">
+
+      <!-- Step 1: Two Souls -->
+      <div class="hero-step" id="step1" aria-label="Two Souls">
+        <h1 class="hero-text hero-text--large" data-split="chars">Two <svg
+            style="width:0.8em; height:0.8em; margin: 0 0.1em; transform:translateY(0.1em);" viewBox="0 0 24 24"
+            fill="currentColor">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg> Souls</h1>
+      </div>
+
+      <!-- Step 2: One Journey -->
+      <div class="hero-step" id="step2" aria-label="One Journey">
+        <p class="hero-text hero-text--medium" data-split="words">One <svg
+            style="width:0.8em; height:0.8em; margin: 0 0.1em; transform:translateY(0.1em);" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" />
+          </svg> Journey</p>
+      </div>
+
+      <!-- Step 3: Names -->
+      <div class="hero-step" id="step3" aria-label="Santhosh and Ambika">
+        <p class="hero-text hero-text--names" id="coupleNames"
+          style="font-family: 'Great Vibes', cursive; font-size: 1.5em; text-transform: none; letter-spacing: 2px;">
+          Santhosh ❤️ Ambika</p>
+      </div>
+
+      <!-- Step 4: Are Getting Engaged -->
+      <div class="hero-step" id="step4" aria-label="Are Getting Engaged">
+        <p class="hero-text hero-text--engaged" data-split="words">Are Getting Engaged</p>
+      </div>
+
+      <!-- Step 5: Date & Location -->
+      <div class="hero-step" id="step5" aria-label="Date and Location">
+        <div class="hero-date">
+          <span class="date-text" data-split="chars">22.03.2026</span>
+          <div class="date-divider"></div>
+          <span class="location-text">Save the Date</span>
+        </div>
+      </div>
+
+      <!-- Scroll cue -->
+      <div class="scroll-cue" id="scrollCue" aria-label="Scroll to explore">
+        <span class="scroll-cue__line"></span>
+        <span class="scroll-cue__label">Scroll</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       SVG DIVIDER
+  ═══════════════════════════════════════════════ -->
+  <div class="svg-divider" aria-hidden="true">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path class="divider-path" d="M0,30 Q360,60 720,30 T1440,30" />
+    </svg>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       STORY SECTION 1
+  ═══════════════════════════════════════════════ -->
+  <section class="story-section" id="story1">
+    <!-- Animated Mandala -->
+    <svg class="bg-mandala" viewBox="0 0 200 200" aria-hidden="true">
+      <defs>
+        <path id="petal" d="M100 100 Q150 50 100 0 Q50 50 100 100" />
+      </defs>
+      <g stroke="currentColor" stroke-width="0.5" fill="none">
+        <use href="#petal" />
+        <use href="#petal" transform="rotate(45 100 100)" />
+        <use href="#petal" transform="rotate(90 100 100)" />
+        <use href="#petal" transform="rotate(135 100 100)" />
+        <use href="#petal" transform="rotate(180 100 100)" />
+        <use href="#petal" transform="rotate(225 100 100)" />
+        <use href="#petal" transform="rotate(270 100 100)" />
+        <use href="#petal" transform="rotate(315 100 100)" />
+        <circle cx="100" cy="100" r="20" stroke-width="1" />
+      </g>
+    </svg>
+
+    <div class="story-inner">
+      <p class="story-quote reveal-text" data-split="words">
+        Every <svg style="width:0.8em; height:0.8em; margin: 0 0.1em; transform:translateY(0.15em);" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg> love story is beautiful...
+      </p>
+      <div class="story-line reveal-line" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       STORY SECTION 2
+  ═══════════════════════════════════════════════ -->
+  <section class="story-section story-section--alt" id="story2">
+    <div class="story-inner">
+      <p class="story-quote story-quote--italic reveal-text" data-split="words">
+        Ours is our favorite.
+      </p>
+      <!-- SVG Heart path -->
+      <svg class="heart-svg" viewBox="0 0 100 90" aria-hidden="true">
+        <path class="heart-path" id="heartPath"
+          d="M50,80 C20,60 5,40 5,25 C5,10 18,2 30,5 C40,7 50,20 50,20 C50,20 60,7 70,5 C82,2 95,10 95,25 C95,40 80,60 50,80 Z" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       TIMELINE SECTION
+  ═══════════════════════════════════════════════ -->
+  <section class="timeline-section" id="timeline">
+    <svg class="bg-hourglass" viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M20 10 L80 10 L60 50 L80 90 L20 90 L40 50 Z" stroke="currentColor" stroke-width="1" fill="none" />
+    </svg>
+
+    <div class="section-header">
+      <h2 class="section-title reveal-text" data-split="chars">Event <svg
+          style="width:0.8em; height:0.8em; margin: 0 0.1em; transform:translateY(0.15em);" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg> Timeline</h2>
+      <div class="section-line reveal-line" aria-hidden="true"></div>
+    </div>
+
+    <div class="timeline">
+      <!-- Timeline items -->
+      <div class="timeline-item timeline-item--left" data-index="0">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="timeline-year">The Beginning</span>
+          <p class="timeline-text">Two hearts found each other across the distance of time and space.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item timeline-item--right" data-index="1">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="timeline-year">The Spark</span>
+          <p class="timeline-text">A single moment changed everything. A laugh, a glance, a quiet certainty.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item timeline-item--left" data-index="2">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="timeline-year">The Promise</span>
+          <p class="timeline-text">With love as their compass, they chose each other — for always.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item timeline-item--right" data-index="3">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="timeline-year">22.03.2026</span>
+          <p class="timeline-text">The world will witness what their hearts have always known.</p>
+        </div>
+      </div>
+
+      <!-- Vertical spine -->
+      <div class="timeline-spine" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       SVG DIVIDER 2
+  ═══════════════════════════════════════════════ -->
+  <div class="svg-divider svg-divider--flip" aria-hidden="true">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path class="divider-path" d="M0,30 Q360,0 720,30 T1440,30" />
+    </svg>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       COUNTDOWN SECTION
+  ═══════════════════════════════════════════════ -->
+  <section class="countdown-section" id="countdown">
+    <svg class="bg-compass" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="90" stroke-width="0.5" fill="none" stroke-dasharray="10 5" />
+      <circle class="compass-inner" cx="100" cy="100" r="70" stroke-width="1" fill="none" />
+      <path d="M100 10 L100 190 M10 100 L190 100" stroke-width="0.5" />
+      <path class="compass-inner" d="M35 35 L165 165 M35 165 L165 35" stroke-width="0.5" stroke-dasharray="5 5" />
+    </svg>
+
+    <div class="countdown-header">
+      <h2 class="countdown-title reveal-text" data-split="words">The Big <svg
+          style="width:0.8em; height:0.8em; margin: 0 0.1em; transform:translateY(0.15em);" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 21h10M12 15v6M9 4h6M9 4a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10H9Z" />
+        </svg> Day</h2>
+    </div>
+    <div class="countdown-display">
+      <div class="countdown-unit">
+        <span class="countdown-number" id="cdDays">000</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <div class="countdown-sep">·</div>
+      <div class="countdown-unit">
+        <span class="countdown-number" id="cdHours">00</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <div class="countdown-sep">·</div>
+      <div class="countdown-unit">
+        <span class="countdown-number" id="cdMinutes">00</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+      <div class="countdown-sep">·</div>
+      <div class="countdown-unit">
+        <span class="countdown-number" id="cdSeconds">00</span>
+        <span class="countdown-label">Seconds</span>
+      </div>
+    </div>
+    <p class="countdown-subtitle">Until we celebrate love</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       INVITE SECTION
+  ═══════════════════════════════════════════════ -->
+  <section class="invite-section" id="invite">
+    <svg class="bg-rings" viewBox="0 0 300 150" aria-hidden="true">
+      <circle class="ring-left" cx="110" cy="75" r="60" stroke-width="2" fill="none" />
+      <circle class="ring-right" cx="190" cy="75" r="60" stroke-width="2" fill="none" />
+    </svg>
+
+    <div class="invite-inner">
+      <p class="invite-sub reveal-text" data-split="words">With joy and love</p>
+      <h2 class="invite-title reveal-text" data-split="words">You Are Invited</h2>
+      <p class="invite-body">
+        Please join us as we celebrate the engagement of<br />
+        <em>Santhosh</em> &amp; <em>Ambika</em><br />
+        on <strong>22nd March, 2026</strong>
+      </p>
+
+      <!-- SVG animated button -->
+      <button class="invite-btn" id="rsvpBtn" aria-label="RSVP Now">
+        <svg class="btn-border" viewBox="0 0 220 60" aria-hidden="true">
+          <rect class="btn-rect" x="2" y="2" width="216" height="56" rx="4" />
+        </svg>
+        <span class="btn-label">Save the Date</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="footer-names">Santhosh ❤️ Ambika</div>
+    <div class="footer-date">22 · 03 · 2026</div>
+    <div class="footer-divider" aria-hidden="true"></div>
+    <p class="footer-note">Made with love ✦</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+
+</html>
