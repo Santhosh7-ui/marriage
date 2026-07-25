@@ -1,0 +1,17 @@
+// ═══════════════════════════════════════════════════════
+// CinematicIntro.module.scss
+// Wrapper and top-level layout for the engagement page.
+// NOTE: Most child elements use global classes from
+// _helpers.scss because GSAP targets them by class name.
+// ═══════════════════════════════════════════════════════
+
+@use '../../../styles/abstracts/colors' as c;
+@use '../../../styles/abstracts/animations' as a;
+
+// ── Page wrapper ─────────────────────────────────────────
+.wrapper {
+  overflow-x: hidden;
+  position: relative;
+  color: c.$white;
+  background: c.$bg;
+}

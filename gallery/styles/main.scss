@@ -1,0 +1,14 @@
+// ═══════════════════════════════════════════════════════
+// MAIN SCSS ENTRY POINT
+// Replaces app/globals.css and app/engemeent.css as the
+// global stylesheet imported in app/layout.tsx.
+//
+// Order matters:
+//   1. Base reset (no dependencies)
+//   2. Global body/html defaults
+//   3. Global utility classes (GSAP targets, btn-3d, etc.)
+// ═══════════════════════════════════════════════════════
+
+@use 'base/reset';
+@use 'base/globals';
+@use 'utilities/helpers';

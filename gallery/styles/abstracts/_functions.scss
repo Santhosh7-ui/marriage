@@ -1,0 +1,18 @@
+// ═══════════════════════════════════════════════════════
+// DESIGN TOKENS — FUNCTIONS
+// ═══════════════════════════════════════════════════════
+
+/// Convert px to rem
+/// @param {Number} $px - pixel value
+/// @return {Number} - rem value
+@function rem($px) {
+  @return #{$px / 16}rem;
+}
+
+/// Alpha variant of a colour
+/// @param {Color} $color - base colour
+/// @param {Number} $alpha - alpha value 0–1
+/// @return {Color}
+@function alpha($color, $alpha) {
+  @return rgba($color, $alpha);
+}

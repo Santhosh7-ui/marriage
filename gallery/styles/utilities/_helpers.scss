@@ -1,0 +1,574 @@
+// ═══════════════════════════════════════════════════════
+// UTILITIES — HELPERS
+//
+// CRITICAL: All classes in this file are GLOBAL (not scoped
+// to any CSS Module). This is intentional — GSAP in
+// animations.ts, CinematicIntro, and GlimpsesGallery
+// targets these class names as plain strings at runtime.
+// DO NOT move these into CSS Modules.
+// ═══════════════════════════════════════════════════════
+
+@use '../abstracts/colors' as c;
+@use '../abstracts/animations' as a;
+@use '../abstracts/typography' as t;
+
+// ── A11y ────────────────────────────────────────────────
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+// ── Background Glow Container ────────────────────────────
+.bg-glow-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.2;
+  animation: pulseGlow 8s infinite alternate ease-in-out;
+}
+
+.ambient-glow-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, c.$gold, transparent 70%);
+  top: -10%;
+  left: -10%;
+  animation-duration: 12s;
+}
+
+.ambient-glow-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, c.$lavender, transparent 70%);
+  bottom: -20%;
+  right: -10%;
+  animation-duration: 15s;
+}
+
+.ambient-glow-3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #ffffff, transparent 70%);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.08;
+  animation-duration: 10s;
+}
+
+@keyframes pulseGlow {
+  0%   { opacity: 0.15; transform: scale(0.9); }
+  100% { opacity: 0.35; transform: scale(1.1); }
+}
+
+// ── Floating Icons ───────────────────────────────────────
+.floating-icons {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bg-icon {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  opacity: 0.12;
+  color: c.$gold;
+  animation: floatIcon 15s infinite ease-in-out;
+}
+
+.bg-icon-1 { top: 15%; left: 10%; animation-duration: 18s; transform: scale(1.2); }
+.bg-icon-2 { top: 25%; right: 15%; animation-duration: 22s; animation-delay: -5s; color: c.$lavender; }
+.bg-icon-3 { top: 60%; left: 20%; animation-duration: 16s; animation-delay: -2s; }
+.bg-icon-4 { top: 75%; right: 10%; animation-duration: 20s; animation-delay: -8s; transform: scale(1.5); color: c.$gold; }
+.bg-icon-5 { top: 45%; left: 80%; animation-duration: 19s; animation-delay: -12s; color: c.$lavender; }
+.bg-icon-6 { top: 85%; left: 40%; animation-duration: 25s; animation-delay: -4s; transform: scale(0.8); }
+
+@keyframes floatIcon {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0.08; }
+  50%  { transform: translateY(-30px) rotate(15deg); opacity: 0.2; }
+  100% { transform: translateY(0) rotate(0deg); opacity: 0.08; }
+}
+
+// ── Cursor Glow (targeted by GSAP via #cursorGlow) ───────
+.cursor-glow {
+  position: fixed;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  transition: opacity 0.3s;
+}
+
+// ── Grain Overlay ────────────────────────────────────────
+.grain-overlay {
+  position: fixed;
+  inset: -200%;
+  width: 400%;
+  height: 400%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  animation: grain 8s steps(10) infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10%  { transform: translate(-2%, -3%); }
+  20%  { transform: translate(3%, 2%); }
+  30%  { transform: translate(-1%, 4%); }
+  40%  { transform: translate(4%, -1%); }
+  50%  { transform: translate(-3%, 1%); }
+  60%  { transform: translate(2%, -4%); }
+  70%  { transform: translate(-4%, 3%); }
+  80%  { transform: translate(1%, -2%); }
+  90%  { transform: translate(-2%, 4%); }
+}
+
+// ── Floating Particles ───────────────────────────────────
+.particles-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: c.$gold;
+  opacity: 0;
+  animation: floatUp var(--dur, 12s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes floatUp {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 0.4; }
+  90%  { opacity: 0.1; }
+  100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+}
+
+// ── Hero (GSAP targets: .hero, .hero-step, .hero-text, .glow-orb) ─
+.hero {
+  position: relative;
+  height: 100dvh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: c.$bg;
+}
+
+.hero-bg-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.svg-line {
+  stroke: c.$gold;
+  stroke-width: 0.5;
+  opacity: 0;
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
+  transition: opacity 1s;
+}
+
+.svg-circle {
+  fill: none;
+  stroke: c.$gold;
+  stroke-width: 0.4;
+  opacity: 0;
+  stroke-dasharray: 2500;
+  stroke-dashoffset: 2500;
+}
+
+// ── Glow Orbs (GSAP parallax targets) ────────────────────
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  animation: orbPulse 8s ease-in-out infinite alternate;
+}
+
+.glow-orb--gold {
+  width: 400px;
+  height: 400px;
+  background: c.$gold;
+  opacity: 0.045;
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.glow-orb--lavender {
+  width: 350px;
+  height: 350px;
+  background: c.$lavender;
+  opacity: 0.05;
+  bottom: 20%;
+  right: 10%;
+  animation-delay: 3s;
+}
+
+@keyframes orbPulse {
+  from { transform: scale(1) translate(0, 0); }
+  to   { transform: scale(1.3) translate(30px, -20px); }
+}
+
+// ── Hero Content (GSAP targets: .hero-content, .hero-step, .hero-text) ─
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+.hero-step {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.hero-step.is-active {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+// ── Hero Typography (GSAP targets these classes) ─────────
+.hero-text {
+  font-family: t.$ff-display;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.15;
+  will-change: transform, opacity, filter;
+  transition: text-shadow 0.3s a.$ease-smooth, color 0.3s a.$ease-smooth;
+}
+
+.hero-text--large {
+  font-size: clamp(3.5rem, 10vw, 8rem);
+  color: c.$white;
+}
+
+.hero-text--medium {
+  font-size: clamp(2rem, 6vw, 5rem);
+  color: c.$muted;
+  letter-spacing: 0.3em;
+}
+
+.hero-text--names {
+  font-family: t.$ff-heading;
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  font-weight: t.$fw-bold;
+  font-style: italic;
+  color: c.$gold;
+  letter-spacing: 0.06em;
+  text-shadow:
+    0 0 40px c.$gold-glow,
+    0 0 80px c.$gold-glow-lg;
+}
+
+.hero-text--engaged {
+  font-size: clamp(1.2rem, 3.5vw, 2.8rem);
+  color: c.$white;
+  letter-spacing: 0.42em;
+  font-weight: t.$fw-regular;
+}
+
+// ── Particle Hero (GSAP targets #particleHero) ───────────
+.particle-hero {
+  position: relative;
+  height: 100dvh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: c.$bg;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.particle-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.is-fixed-cue {
+  position: absolute;
+  bottom: 3rem;
+  z-index: 10;
+}
+
+// ── Scroll Cue (GSAP targets #scrollCue, .scroll-cue__line) ─
+.scroll-cue {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0;
+}
+
+.scroll-cue__line {
+  display: block;
+  width: 1px;
+  height: 50px;
+  background: linear-gradient(to bottom, c.$gold, transparent);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+
+.scroll-cue__label {
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: c.$muted;
+}
+
+@keyframes scrollLine {
+  0%   { transform: scaleY(0); transform-origin: top; opacity: 1; }
+  50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  51%  { transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+}
+
+// ── SVG Dividers ─────────────────────────────────────────
+.svg-divider {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  margin: 0;
+
+  svg {
+    width: 100%;
+    height: 60px;
+    display: block;
+  }
+}
+
+.svg-divider--flip svg {
+  transform: scaleX(-1);
+}
+
+.divider-path {
+  fill: none;
+  stroke: c.$gold;
+  stroke-width: 0.8;
+  opacity: 0.3;
+  stroke-dasharray: 1800;
+  stroke-dashoffset: 1800;
+}
+
+// ── GSAP Split Text Targets ──────────────────────────────
+.char,
+.word {
+  display: inline-block;
+}
+
+.reveal-text .word {
+  transition: text-shadow 0.3s ease;
+}
+
+.reveal-text .word:hover {
+  text-shadow: 0 0 20px c.$gold-glow;
+}
+
+// ── Neon Glow Hover (GSAP scrolling glow) ────────────────
+.word,
+.char,
+.hero-text,
+.story-quote,
+.timeline-text,
+.timeline-year,
+.countdown-number,
+.invite-title,
+.section-title {
+  transition: text-shadow 0.3s a.$ease-smooth, color 0.3s a.$ease-smooth;
+}
+
+@media (hover: hover) {
+  .word:hover,
+  .char:hover,
+  .hero-text:hover,
+  .story-quote:hover,
+  .timeline-text:hover,
+  .timeline-year:hover,
+  .countdown-number:hover,
+  .invite-title:hover,
+  .section-title:hover,
+  .word.is-scrolling-glow,
+  .char.is-scrolling-glow,
+  .hero-text.is-scrolling-glow,
+  .story-quote.is-scrolling-glow,
+  .timeline-text.is-scrolling-glow,
+  .timeline-year.is-scrolling-glow,
+  .countdown-number.is-scrolling-glow,
+  .invite-title.is-scrolling-glow,
+  .section-title.is-scrolling-glow {
+    text-shadow: 0 0 10px c.$gold, 0 0 20px c.$gold, 0 0 35px c.$gold !important;
+    color: #fff !important;
+    cursor: default;
+  }
+}
+
+// ── Footer (GSAP targets .site-footer > *) ───────────────
+.site-footer {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: c.$bg;
+  border-top: 1px solid c.$gold-line;
+  position: relative;
+}
+
+.footer-names {
+  font-family: t.$ff-heading;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-style: italic;
+  color: c.$gold;
+  margin-bottom: 0.8rem;
+}
+
+.footer-date {
+  font-family: t.$ff-display;
+  font-size: 0.75rem;
+  letter-spacing: 0.5em;
+  color: c.$muted;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.footer-divider {
+  width: 60px;
+  height: 1px;
+  background: c.$gold-line;
+  margin: 1.5rem auto;
+}
+
+.footer-note {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: rgba(245, 245, 245, 0.2);
+}
+
+// ── GlimpsesGallery (GSAP targets .glimpses-title, .glimpses-ornament, .glimpse-card) ─
+.glimpses-title {
+  text-shadow: 0 0 60px rgba(212, 175, 55, 0.15);
+}
+
+.glimpse-frame:hover .glimpse-outer-frame {
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.35),
+    0 20px 60px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(212, 175, 55, 0.1);
+}
+
+.glimpse-outer-frame {
+  transition: box-shadow 0.6s a.$ease-silk;
+}
+
+.glimpse-frame:hover .corner-ornament path,
+.glimpse-frame:hover .corner-ornament circle {
+  opacity: 1 !important;
+}
+
+.corner-ornament {
+  transition: opacity 0.4s ease;
+}
+
+// ── 3D Glossy Button (global, used from IntroScreen + GlimpsesGallery) ─
+.btn-3d {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  margin: 0.25rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+  transition: all 0.25s a.$ease-smooth;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: linear-gradient(180deg, #4da3ff 0%, #0066ff 100%);
+  box-shadow:
+    0 8px 20px rgba(0, 102, 255, 0.4),
+    inset 0 3px 6px rgba(255, 255, 255, 0.8),
+    inset 0 -5px 10px rgba(0, 50, 150, 0.6),
+    0 0 0 4px rgba(255, 255, 255, 0.15);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  &:hover {
+    background: linear-gradient(180deg, #ffb84d 0%, #ff7700 100%);
+    box-shadow:
+      0 0 30px rgba(255, 119, 0, 0.8),
+      inset 0 3px 6px rgba(255, 255, 255, 0.9),
+      inset 0 -5px 10px rgba(150, 50, 0, 0.6),
+      0 0 0 4px rgba(255, 119, 0, 0.3);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    background: linear-gradient(180deg, #d0d0d0 0%, #f0f0f0 100%);
+    color: #1a202c;
+    box-shadow:
+      0 0 10px rgba(255, 255, 255, 0.5),
+      inset 0 6px 12px rgba(0, 0, 0, 0.25),
+      0 0 0 2px rgba(255, 255, 255, 0.2);
+    text-shadow: none;
+    transform: translateY(2px);
+  }
+
+  @media (min-width: 640px) {
+    padding: 0.75rem 1.75rem;
+    margin: 0.5rem;
+  }
+}
+
+// ── Responsive overrides for GSAP-targeted elements ──────
+@media (max-width: 768px) {
+  .hero-text--names  { font-size: clamp(1.8rem, 8vw, 3.5rem); }
+  .hero-text--large  { font-size: clamp(2.8rem, 12vw, 5rem); }
+}

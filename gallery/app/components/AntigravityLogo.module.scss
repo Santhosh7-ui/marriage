@@ -1,0 +1,48 @@
+// ═══════════════════════════════════════════════════════
+// AntigravityLogo.module.scss
+// Physics-animated letter logo. Transform/color values
+// are computed per-frame and applied as inline styles
+// by the animation loop — only static structural classes
+// are defined here.
+// ═══════════════════════════════════════════════════════
+
+@use '../../styles/abstracts/colors' as c;
+@use '../../styles/abstracts/typography' as t;
+@use '../../styles/abstracts/spacing' as s;
+
+// ── Container ─────────────────────────────────────────────
+.container {
+  display: flex;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+  padding: s.$space-16 0;
+  // perspective is applied inline (800px) — required for 3D
+}
+
+// ── Letter row ────────────────────────────────────────────
+.letterRow {
+  display: flex;
+  font-size: 1.125rem;
+  font-family: t.$ff-heading;
+  font-weight: t.$fw-bold;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: c.$white;
+
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+  }
+}
+
+// ── Visually hidden heading (a11y) ────────────────────────
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

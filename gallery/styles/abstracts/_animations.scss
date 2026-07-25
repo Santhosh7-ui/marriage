@@ -1,0 +1,32 @@
+// ═══════════════════════════════════════════════════════
+// DESIGN TOKENS — ANIMATIONS & TRANSITIONS
+// ═══════════════════════════════════════════════════════
+
+// ── Easing ───────────────────────────────────────────────
+$ease-silk:   cubic-bezier(0.19, 1, 0.22, 1);
+$ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+$ease-expo:   cubic-bezier(0.16, 1, 0.3, 1);
+$ease-out:    cubic-bezier(0.25, 0.1, 0.25, 1);
+
+// ── Transition Durations ─────────────────────────────────
+$transition-fast:   0.15s;
+$transition-normal: 0.3s;
+$transition-medium: 0.5s;
+$transition-slow:   0.7s;
+
+// ── Composed Transitions ─────────────────────────────────
+$transition-color:      color #{$transition-normal} #{$ease-smooth},
+                        text-shadow #{$transition-normal} #{$ease-smooth};
+
+$transition-all-fast:   all #{$transition-fast} #{$ease-smooth};
+$transition-all-normal: all #{$transition-normal} #{$ease-smooth};
+$transition-all-slow:   all #{$transition-slow} #{$ease-silk};
+
+// ── Z-index Scale ────────────────────────────────────────
+$z-bg:        0;
+$z-base:      1;
+$z-elevated:  10;
+$z-overlay:   20;
+$z-nav:       50;
+$z-modal:     60;
+$z-cursor:    9999;

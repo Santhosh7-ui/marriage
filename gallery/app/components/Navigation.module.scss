@@ -1,0 +1,227 @@
+// ═══════════════════════════════════════════════════════
+// Navigation.module.scss
+// Header navigation: desktop layout, mobile hamburger,
+// fullscreen menu overlay, pill action button.
+// ═══════════════════════════════════════════════════════
+
+@use '../../styles/abstracts/colors' as c;
+@use '../../styles/abstracts/typography' as t;
+@use '../../styles/abstracts/animations' as a;
+@use '../../styles/abstracts/spacing' as s;
+@use '../../styles/abstracts/radius' as r;
+@use '../../styles/abstracts/mixins' as m;
+
+// ── Header ───────────────────────────────────────────────
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6rem;          // 96px — matches h-24
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 s.$space-24;  // px-6
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4), transparent);
+
+  @include m.tablet-up {
+    height: 7rem;         // 112px — matches md:h-28
+    padding: 0 s.$space-64; // md:px-16
+  }
+}
+
+// ── Desktop inner wrapper ─────────────────────────────────
+.desktopRow {
+  display: none;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+
+  @include m.tablet-up {
+    display: flex;
+  }
+}
+
+// ── Navigation links ─────────────────────────────────────
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;           // gap-10
+  font-size: 13px;
+  font-weight: t.$fw-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+
+  @include m.desktop {
+    gap: 3.5rem;         // lg:gap-14
+  }
+}
+
+.navLink {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color a.$transition-normal a.$ease-smooth,
+              text-shadow a.$transition-normal a.$ease-smooth;
+
+  &:hover {
+    color: c.$gold;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+  }
+
+  &--active {
+    color: c.$gold;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+  }
+}
+
+// ── Pill action button ────────────────────────────────────
+.pill {
+  display: inline-block;
+  padding: s.$space-14 s.$space-32;  // py-3.5 px-8
+  background: #ffffff;
+  color: #000000;
+  font-weight: t.$fw-bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  border-radius: r.$radius-full;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: background a.$transition-fast a.$ease-smooth,
+              transform a.$transition-fast a.$ease-smooth;
+
+  &:hover {
+    background: #e5e5e5;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ── Mobile row ───────────────────────────────────────────
+.mobileRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  @include m.tablet-up {
+    display: none;
+  }
+}
+
+.mobileBrand {
+  font-size: 0.875rem;
+  font-family: t.$ff-heading;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: c.$white;
+  text-decoration: none;
+}
+
+.mobileActions {
+  display: flex;
+  align-items: center;
+  gap: s.$space-16;
+}
+
+.mobileViewToggle {
+  padding: s.$space-6 s.$space-16;
+  background: rgba(255, 255, 255, 0.1);
+  color: c.$white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: t.$fw-semibold;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: r.$radius-full;
+  cursor: pointer;
+  transition: all a.$transition-fast a.$ease-smooth;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ── Hamburger button ─────────────────────────────────────
+.hamburger {
+  background: none;
+  border: none;
+  color: c.$white;
+  padding: s.$space-8;
+  cursor: pointer;
+  z-index: 60;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.hamburgerIcon {
+  width: 1.25rem;   // w-5
+  height: 1rem;     // h-4
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.bar {
+  display: block;
+  height: 2px;      // h-0.5
+  width: 100%;
+  background: c.$white;
+  transition: all a.$transition-normal a.$ease-smooth;
+
+  &--top-open    { transform: rotate(45deg) translateY(6px); }
+  &--mid-open    { opacity: 0; }
+  &--bottom-open { transform: rotate(-45deg) translateY(-8px); }
+}
+
+// ── Mobile fullscreen overlay ─────────────────────────────
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  @include m.tablet-up {
+    display: none;
+  }
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  gap: s.$space-24;
+  text-align: center;
+  font-size: 1.125rem;
+  font-family: t.$ff-heading;
+  letter-spacing: 0.15em;
+  width: 100%;
+  padding: 0 s.$space-32;
+  text-transform: uppercase;
+}
+
+.mobileNavLink {
+  color: c.$white;
+  text-decoration: none;
+  padding: s.$space-12 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: color a.$transition-normal a.$ease-smooth;
+
+  &:hover {
+    color: c.$gold;
+  }
+}

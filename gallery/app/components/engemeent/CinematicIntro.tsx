@@ -9,6 +9,7 @@ import Lenis from 'lenis';
 import { initAnimations } from './animations';
 import Navigation from '@/app/components/Navigation';
 import GlimpsesGallery from './GlimpsesGallery';
+import styles from './CinematicIntro.module.scss';
 
 export default function CinematicIntro() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,7 +46,7 @@ export default function CinematicIntro() {
   }, [router]);
 
   return (
-    <div ref={containerRef} className="engemeent-wrapper overflow-x-hidden relative text-white bg-[#080808]">
+    <div ref={containerRef} className={styles.wrapper}>
       {/* Navigation Header */}
       <Navigation title="Santhosh & Ambika" isGallery={false} />
 

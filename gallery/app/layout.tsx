@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import './globals.css';
-import './engemeent.css';
+import '../styles/main.scss';
 
 export const metadata: Metadata = {
   title: 'Photo Universe — Infinite Gallery',

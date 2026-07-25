@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import styles from './GlimpsesGallery.module.scss';
 
 // All pages shown, full natural height — 2 per row
 const GALLERY_PAGES = [1, 4, 7, 10, 14, 18, 22, 25, 28, 31, 36, 40];
@@ -56,7 +57,7 @@ export default function GlimpsesGallery() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Title entrance
+    // Title entrance — targets global .glimpses-title class
     gsap.fromTo('.glimpses-title',
       { opacity: 0, y: 50, filter: 'blur(6px)' },
       { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.4, ease: 'power4.out',
@@ -69,7 +70,7 @@ export default function GlimpsesGallery() {
         scrollTrigger: { trigger: '.glimpses-ornament', start: 'top 88%', toggleActions: 'play none none none' } }
     );
 
-    // Cards stagger — left column slides from left, right column from right
+    // Cards stagger — targets global .glimpse-card class
     const cards = sectionRef.current?.querySelectorAll('.glimpse-card');
     cards?.forEach((card, i) => {
       const fromX = i % 2 === 0 ? -60 : 60;
@@ -87,80 +88,65 @@ export default function GlimpsesGallery() {
   }, []);
 
   return (
-    <div
-      ref={sectionRef}
-      className="w-full bg-[#080808] my-16 py-28 px-4 sm:px-10 lg:px-20 xl:px-32 2xl:px-48 flex flex-col items-center relative overflow-hidden border-t border-b border-white/5"
-    >
+    <div ref={sectionRef} className={styles.section}>
       {/* Ambient gold glow */}
-      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] opacity-[0.07]"
-        style={{ background: 'radial-gradient(ellipse at center top, #d4af37, transparent 70%)' }} />
+      <div className={styles.ambientGlow} />
 
       {/* Section header */}
-      <div className="relative z-10 text-center mb-20">
-        <p className="text-[#d4af37]/50 tracking-[0.45em] uppercase text-xs font-semibold mb-4">
-          A Sneak Peek
-        </p>
-        <h2 className="glimpses-title font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-[#d4af37] tracking-[0.08em] mb-5">
-          Glimpses of Forever
-        </h2>
-        <p className="text-white/35 tracking-[0.22em] uppercase text-xs sm:text-sm">
-          Captured moments from our wedding album
-        </p>
-        {/* Ornament line */}
-        <div className="glimpses-ornament flex items-center justify-center gap-4 mt-8">
-          <div className="h-px w-20 sm:w-32 bg-gradient-to-r from-transparent to-[#d4af37]/55" />
+      <div className={styles.header}>
+        <p className={styles.eyebrow}>A Sneak Peek</p>
+        {/* glimpses-title is a global GSAP-targeted class */}
+        <h2 className="glimpses-title">Glimpses of Forever</h2>
+        <p className={styles.subtitle}>Captured moments from our wedding album</p>
+
+        {/* glimpses-ornament is a global GSAP-targeted class */}
+        <div className="glimpses-ornament">
+          <div className={styles.ornamentLine} />
           <svg width="16" height="16" viewBox="0 0 24 24" fill="#d4af37" opacity="0.75">
             <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
           </svg>
-          <div className="h-px w-20 sm:w-32 bg-gradient-to-l from-transparent to-[#d4af37]/55" />
+          <div className={`${styles.ornamentLine} ${styles['ornamentLine--right']}`} />
         </div>
       </div>
 
-      {/* 2-column grid — no aspect-ratio crop, photos show full height */}
-      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-10 lg:gap-12 xl:gap-16 w-full max-w-[1200px] lg:max-w-[1400px] xl:max-w-[1600px] 2xl:max-w-[1800px]">
+      {/* 2-column grid — glimpse-card is a global GSAP-targeted class */}
+      <div className={styles.grid}>
         {GALLERY_PAGES.map((pageNum, i) => (
           <div
             key={pageNum}
-            className="glimpse-card group cursor-pointer relative p-[10px] lg:p-[14px] xl:p-[18px] bg-[#0e0c0a]"
-            style={{
-              boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
-              border: '1px solid rgba(212,175,55,0.18)',
-            }}
+            className="glimpse-card"
             onClick={() => router.push('/album')}
           >
             {/* Geometric corner brackets */}
             <CornerBrackets />
 
             {/* Inner thin gold border */}
-            <div className="absolute inset-[10px] border border-[#d4af37]/10 pointer-events-none z-20" />
+            <div className={styles.innerBorder} />
 
-            {/* Photo — no fixed aspect ratio, shows full image naturally */}
-            <div className="relative overflow-hidden">
+            {/* Photo — no fixed aspect ratio */}
+            <div className={styles.photoWrap}>
               <img
                 src={`/api/image?key=album/page_${String(pageNum).padStart(3, '0')}.jpg`}
                 alt={`Wedding Moment ${pageNum}`}
-                className="w-full h-auto object-contain block transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-[1.03]"
+                className={styles.photo}
                 loading="lazy"
               />
 
               {/* Subtle vignette */}
-              <div className="absolute inset-0 pointer-events-none"
-                style={{ background: 'radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.45) 100%)' }} />
+              <div className={styles.vignette} />
 
               {/* Hover reveal */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex flex-col justify-end p-6">
-                <div className="transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                  <div className="w-6 h-px bg-[#d4af37]/70 mb-3" />
-                  <span className="block text-white/45 text-[10px] tracking-[0.4em] uppercase">
-                    Santhosh &amp; Ambika
-                  </span>
+              <div className={styles.hoverReveal}>
+                <div className={styles.hoverContent}>
+                  <div className={styles.hoverLine} />
+                  <span className={styles.hoverLabel}>Santhosh &amp; Ambika</span>
                 </div>
               </div>
             </div>
 
-            {/* Page number tag — bottom right outside */}
-            <div className="absolute -bottom-3 -right-3 z-30 bg-[#080808] border border-[#d4af37]/30 px-2 py-0.5">
-              <span className="text-[#d4af37]/60 text-[9px] tracking-[0.3em] font-semibold uppercase">
+            {/* Page number tag */}
+            <div className={styles.pageTag}>
+              <span className={styles.pageTagLabel}>
                 {String(i + 1).padStart(2, '0')}
               </span>
             </div>
@@ -169,23 +155,23 @@ export default function GlimpsesGallery() {
       </div>
 
       {/* CTA */}
-      <div className="mt-32 mb-8 relative z-10 flex flex-col items-center gap-5">
+      <div className={styles.cta}>
         <button
           onClick={() => router.push('/album')}
           className="btn-3d text-base sm:text-lg px-12 py-5 shadow-[0_0_30px_rgba(212,175,55,0.3)]"
         >
           Explore Full Album
         </button>
-        <p className="text-white/20 text-[10px] tracking-[0.35em] uppercase">48 memories await</p>
+        <p className={styles.ctaHint}>48 memories await</p>
       </div>
 
       {/* Bottom ornament */}
-      <div className="flex items-center justify-center gap-4 mt-16 opacity-25">
-        <div className="h-px w-28 bg-gradient-to-r from-transparent to-[#d4af37]" />
+      <div className={styles.bottomOrnament}>
+        <div className={styles.bottomLine} />
         <svg width="12" height="12" viewBox="0 0 24 24" fill="#d4af37">
           <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
         </svg>
-        <div className="h-px w-28 bg-gradient-to-l from-transparent to-[#d4af37]" />
+        <div className={`${styles.bottomLine} ${styles['bottomLine--right']}`} />
       </div>
     </div>
   );

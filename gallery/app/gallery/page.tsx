@@ -5,12 +5,55 @@ import CurvedFilmstrip from '@/app/components/gallery/CurvedFilmstrip';
 import GalleryPreview from '@/app/components/gallery/GalleryPreview';
 import CarouselView from '@/app/components/gallery/CarouselView';
 import Navigation from '@/app/components/Navigation';
+import styles from './GalleryPage.module.scss';
 
 export default function GalleryPage() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'curved' | 'carousel'>('curved');
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+
+  const showActionMessage = (msg: string) => {
+    setActionMessage(msg);
+    setTimeout(() => setActionMessage(null), 3000);
+  };
+
+  const handleDeletePhoto = async (key: string) => {
+    if (!window.confirm('Are you sure you want to delete this photo from the gallery?')) return;
+    try {
+      const res = await fetch(`/api/photos?key=${encodeURIComponent(key)}`, { method: 'DELETE' });
+      if (res.ok) {
+        showActionMessage('Photo deleted successfully');
+        setPhotos(prev => prev.filter(p => p !== key));
+        // Adjust selectedIndex if the deleted photo is the last one or earlier
+        setSelectedIndex(prev => (prev >= photos.length - 1 ? Math.max(0, photos.length - 2) : prev));
+      } else {
+        alert('Failed to delete photo');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete photo');
+    }
+  };
+
+  const handleFavoritePhoto = async (key: string) => {
+    try {
+      const res = await fetch('/api/photos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, action: 'favorite' }),
+      });
+      if (res.ok) {
+        showActionMessage('Added to favorites!');
+      } else {
+        alert('Failed to favorite photo');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to favorite photo');
+    }
+  };
 
   useEffect(() => {
     async function fetchPhotos() {
@@ -46,15 +89,15 @@ export default function GalleryPage() {
 
   if (loading) {
     return (
-      <div className="w-full h-screen bg-[#111] flex items-center justify-center text-white">
-        <div className="animate-pulse">Loading gallery...</div>
+      <div className={styles.loadingState}>
+        <div className={styles.loadingPulse}>Loading gallery...</div>
       </div>
     );
   }
 
   if (photos.length === 0) {
     return (
-      <div className="w-full h-screen bg-[#111] flex items-center justify-center text-white">
+      <div className={styles.loadingState}>
         <p>No photos found in the gallery.</p>
       </div>
     );
@@ -63,7 +106,19 @@ export default function GalleryPage() {
   const selectedPhoto = photos[selectedIndex];
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] overflow-hidden flex flex-col relative font-sans text-white">
+    <div className={styles.page}>
+      {/* Toast Notification */}
+      {actionMessage && (
+        <div style={{
+          position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
+          background: 'rgba(0,0,0,0.8)', color: 'white', padding: '12px 24px',
+          borderRadius: '50px', zIndex: 1000, backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+        }}>
+          {actionMessage}
+        </div>
+      )}
 
       {/* Navigation */}
       <Navigation
@@ -74,12 +129,14 @@ export default function GalleryPage() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col md:flex-row relative w-full h-full pt-16">
+      <div className={styles.content}>
         {viewMode === 'carousel' && (
           <CarouselView
             photos={photos}
             selectedIndex={selectedIndex}
             onSelect={setSelectedIndex}
+            onDelete={handleDeletePhoto}
+            onFavorite={handleFavoritePhoto}
           />
         )}
 
@@ -98,21 +155,22 @@ export default function GalleryPage() {
               title={`Memory ${selectedIndex + 1}`}
               date="22 de Agosto 2012"
               totalPhotos={photos.length}
+              onDelete={handleDeletePhoto}
+              onFavorite={handleFavoritePhoto}
             />
 
             {/* Mobile Bottom side: Horizontal Filmstrip */}
-            <div className="md:hidden w-full h-[120px] bg-black/60 flex items-center overflow-x-auto px-4 gap-4 pb-6 pt-2 snap-x shadow-[0_-10px_20px_rgba(0,0,0,0.5)] z-30">
+            <div className={styles.mobileStrip}>
               {photos.map((photoKey, index) => (
                 <div
                   key={photoKey}
                   onClick={() => setSelectedIndex(index)}
-                  className={`w-[80px] h-[60px] flex-shrink-0 rounded-md overflow-hidden border-2 transition-all cursor-pointer snap-center
-                    ${index === selectedIndex ? 'border-blue-400 scale-110 shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'border-transparent opacity-60'}`}
+                  className={`${styles.mobileThumb} ${index === selectedIndex ? styles['mobileThumb--active'] : ''}`}
                 >
                   <img
                     src={`/api/image?key=${encodeURIComponent(photoKey)}`}
                     alt={`Thumbnail ${index}`}
-                    className="w-full h-full object-cover"
+                    className={styles.mobileThumbImg}
                   />
                 </div>
               ))}

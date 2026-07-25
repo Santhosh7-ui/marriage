@@ -1,0 +1,15 @@
+// ═══════════════════════════════════════════════════════
+// ABSTRACTS — BARREL FILE
+// Forward all design token partials from a single entry.
+// Components @use 'styles/abstracts/variables' to get all tokens.
+// ═══════════════════════════════════════════════════════
+
+@forward 'colors';
+@forward 'typography';
+@forward 'spacing';
+@forward 'radius';
+@forward 'animations';
+@forward 'shadows';
+@forward 'breakpoints';
+@forward 'functions';
+// Note: mixins are @use'd directly where needed (they depend on the above)
