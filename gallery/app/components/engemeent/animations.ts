@@ -50,153 +50,14 @@ export function initAnimations() {
 
   /* ─── 5. HERO — CINEMATIC TEXT SEQUENCE ───────────────────────── */
   (function initHero() {
-    const steps = document.querySelectorAll('.hero-step') as NodeListOf<HTMLElement>;
-    const scrollCue = document.getElementById('scrollCue');
-    if (!steps.length) return;
-
-    const stepDurations = [2200, 2000, 2400, 2200, 0]; 
-
-    let masterTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#hero',
-        start: 'top 60%',
-        once: true
-      }
-    });
-
-    /* ── STEP 1: "Two Souls" ─────── */
-    masterTl.call(() => {
-      const el = document.querySelector('#step1 .hero-text') as HTMLElement;
-      if (!el) return;
-      const split = new SplitType(el, { types: 'chars' });
-      activateStep(0);
-
-      gsap.from(split.chars, {
-        opacity: 0,
-        filter: 'blur(12px)',
-        y: 30,
-        duration: 1.1,
-        stagger: 0.08,
-        ease: 'power3.out',
-      });
-    });
-
-    /* ── STEP 2: "One Journey" ──────── */
-    masterTl.call(() => {
-      deactivateStep(0);
-      const el = document.querySelector('#step2 .hero-text') as HTMLElement;
-      if (!el) return;
-      const split = new SplitType(el, { types: 'words' });
-      activateStep(1);
-
-      gsap.from(split.words, {
-        opacity: 0,
-        y: 60,
-        filter: 'blur(8px)',
-        duration: 1.2,
-        stagger: 0.20,
-        ease: 'expo.out',
-      });
-    }, [], `+=${stepDurations[0] / 1000}`);
-
-    /* ── STEP 3: "Ankitha ❤️ Dinesh" ─── */
-    masterTl.call(() => {
-      deactivateStep(1);
-      activateStep(2);
-      const el = document.getElementById('coupleNames');
-      if (!el) return;
-
-      gsap.fromTo(el, {
-        opacity: 0,
-        scale: 0.55,
-        filter: 'blur(20px)',
-      }, {
-        opacity: 1,
-        scale: 1,
-        filter: 'blur(0px)',
-        duration: 1.6,
-        ease: 'expo.out',
-      });
-    }, [], `+=${stepDurations[1] / 1000}`);
-
-    /* ── STEP 4: "Are Getting Engaged" ──── */
-    masterTl.call(() => {
-      deactivateStep(2); 
-      const el = document.querySelector('#step4 .hero-text') as HTMLElement;
-      if (!el) return;
-      const split = new SplitType(el, { types: 'words,chars' });
-      activateStep(3);
-
-      gsap.from(split.chars, {
-        opacity: 0,
-        yPercent: 110,
-        filter: 'blur(4px)',
-        duration: 0.9,
-        stagger: {
-          each: 0.04,
-          from: 'start',
-        },
-        ease: 'power4.out',
-      });
-
-      if (scrollCue) {
-        gsap.to(scrollCue, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          delay: 1.5,
-          ease: 'power2.out',
-        });
-      }
-    }, [], `+=${stepDurations[2] / 1000}`);
-
-    /* ── STEP 5: Date (REMOVED) ─────────── */
-
-    /* ── Hero SVG line draws ──────────────────────────────────── */
-    masterTl.to('.svg-line', {
-      strokeDashoffset: 0,
-      opacity: 0.12,
-      duration: 2.5,
-      stagger: 0.3,
-      ease: 'power2.inOut',
-    }, 0.3);
-
-    masterTl.to('.svg-circle', {
-      strokeDashoffset: 0,
-      opacity: 0.07,
-      duration: 3.0,
-      stagger: 0.5,
-      ease: 'power2.inOut',
-    }, 0.6);
-
-    function activateStep(index: number) {
-      if (steps[index]) {
-        steps[index].style.opacity = '1';
-        steps[index].style.visibility = 'visible';
-        steps[index].classList.add('is-active');
-      }
-    }
-
-    function deactivateStep(index: number) {
-      if (steps[index]) {
-        gsap.to(steps[index], {
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.in',
-          onComplete: () => {
-            steps[index].style.visibility = 'hidden';
-            steps[index].classList.remove('is-active');
-          }
-        });
-      }
-    }
+    // Removed per user request
   })();
 
   /* ─── 6. SCROLL-TRIGGERED TEXT REVEALS ───────────────────────── */
   (function initScrollReveals() {
     document.querySelectorAll('.reveal-text[data-split]').forEach((el) => {
       const element = el as HTMLElement;
-      const splitType = (element.dataset.split || 'words') as any; 
+      const splitType = (element.dataset.split || 'words') as any;
       const split = new SplitType(element, { types: splitType });
       const targets = splitType === 'chars' ? split.chars : split.words;
 
@@ -305,7 +166,7 @@ export function initAnimations() {
       gsap.to(orb, {
         y: i % 2 === 0 ? -80 : 80,
         scrollTrigger: {
-          trigger: '.hero',
+          trigger: '.particle-hero',
           start: 'top top',
           end: 'bottom top',
           scrub: 2,
@@ -481,7 +342,7 @@ export function initAnimations() {
       }
 
       draw() {
-        if(!ctx) return;
+        if (!ctx) return;
         ctx.fillStyle = this.color;
         ctx.beginPath();
         // Draw slightly smaller particles for a finer look
@@ -495,12 +356,12 @@ export function initAnimations() {
       const dpr = window.devicePixelRatio || 1;
       width = window.innerWidth;
       height = window.innerHeight;
-      
+
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
-      
+
       if (ctx) {
         ctx.scale(dpr, dpr);
       }
@@ -553,7 +414,7 @@ export function initAnimations() {
 
     let animationFrameId: number;
     function animate() {
-      if(!ctx) return;
+      if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
       particles.forEach(p => {
         p.update();
