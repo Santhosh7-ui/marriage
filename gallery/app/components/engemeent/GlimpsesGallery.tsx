@@ -89,7 +89,7 @@ export default function GlimpsesGallery() {
   return (
     <div
       ref={sectionRef}
-      className="w-full bg-[#080808] py-28 px-4 sm:px-10 lg:px-16 flex flex-col items-center relative overflow-hidden border-t border-white/5"
+      className="w-full bg-[#080808] py-28 px-4 sm:px-10 lg:px-20 xl:px-32 2xl:px-48 flex flex-col items-center relative overflow-hidden border-t border-white/5"
     >
       {/* Ambient gold glow */}
       <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] opacity-[0.07]"
@@ -100,7 +100,7 @@ export default function GlimpsesGallery() {
         <p className="text-[#d4af37]/50 tracking-[0.45em] uppercase text-xs font-semibold mb-4">
           A Sneak Peek
         </p>
-        <h2 className="glimpses-title font-serif text-4xl sm:text-5xl lg:text-6xl text-[#d4af37] tracking-[0.08em] mb-5">
+        <h2 className="glimpses-title font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-[#d4af37] tracking-[0.08em] mb-5">
           Glimpses of Forever
         </h2>
         <p className="text-white/35 tracking-[0.22em] uppercase text-xs sm:text-sm">
@@ -117,11 +117,11 @@ export default function GlimpsesGallery() {
       </div>
 
       {/* 2-column grid — no aspect-ratio crop, photos show full height */}
-      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-10 w-full max-w-[1200px]">
+      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-10 lg:gap-12 xl:gap-16 w-full max-w-[1200px] lg:max-w-[1400px] xl:max-w-[1600px] 2xl:max-w-[1800px]">
         {GALLERY_PAGES.map((pageNum, i) => (
           <div
             key={pageNum}
-            className="glimpse-card group cursor-pointer relative p-[10px] bg-[#0e0c0a]"
+            className="glimpse-card group cursor-pointer relative p-[10px] lg:p-[14px] xl:p-[18px] bg-[#0e0c0a]"
             style={{
               boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
               border: '1px solid rgba(212,175,55,0.18)',
