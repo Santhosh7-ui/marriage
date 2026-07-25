@@ -10,8 +10,8 @@ export default function AntigravityLogo() {
   // Physics state for each letter
   const [states, setStates] = useState(() => 
     text.split('').map(() => ({
-      currentY: 0,
-      targetY: 0,
+      currentY: -120, // Start high off-screen
+      targetY: -120,
       vy: 0,
       currentScaleY: 1,
       targetScaleY: 1,
@@ -21,13 +21,16 @@ export default function AntigravityLogo() {
       vSkew: 0,
       currentGlow: 0,
       targetGlow: 0,
-      vGlow: 0
+      vGlow: 0,
+      opacity: 0,
+      hasStarted: false
     }))
   );
 
   useEffect(() => {
     let animationFrameId: number;
     const mouse = { x: -1000, y: -1000, active: false };
+    let frameCount = 0;
 
     // Update mouse position relative to container
     const handleMouseMove = (e: MouseEvent) => {
@@ -54,8 +57,10 @@ export default function AntigravityLogo() {
     const spring = 0.08;
     const dampening = 0.72;
     const maxDist = 90; // Proximity threshold
+    const staggerFrames = 4; // Frames between each letter's descent
 
     const animate = () => {
+      frameCount++;
       setStates((prevStates) => {
         const nextStates = [...prevStates];
         const container = containerRef.current;
@@ -67,37 +72,48 @@ export default function AntigravityLogo() {
           const span = lettersRef.current[i];
           if (!span) continue;
 
-          // Find center position of the letter span relative to container
-          const spanRect = span.getBoundingClientRect();
-          const letterX = (spanRect.left + spanRect.width / 2) - containerRect.left;
-          const letterY = (spanRect.top + spanRect.height / 2) - containerRect.top;
+          const state = { ...nextStates[i] };
 
-          const dx = mouse.x - letterX;
-          const dy = mouse.y - letterY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          // Staggered trigger to start falling from top
+          if (!state.hasStarted && frameCount > i * staggerFrames) {
+            state.hasStarted = true;
+            state.targetY = 0;
+          }
 
-          let targetY = 0;
+          let targetY = state.hasStarted ? 0 : -120;
           let targetScaleY = 1;
           let targetSkewX = 0;
           let targetGlow = 0;
 
-          if (mouse.active && dist < maxDist) {
-            const factor = (maxDist - dist) / maxDist; // 0 to 1
+          if (state.hasStarted) {
+            // Fade in the letter
+            state.opacity = Math.min(1, state.opacity + 0.06);
 
-            // Stretch vertically: pull up and scale Y
-            targetScaleY = 1 + factor * 0.75;
-            
-            // Wobble skew based on horizontal offset relative to cursor
-            targetSkewX = (dx / dist) * factor * -35;
+            // Find center position of the letter span relative to container
+            const spanRect = span.getBoundingClientRect();
+            const letterX = (spanRect.left + spanRect.width / 2) - containerRect.left;
+            const letterY = (spanRect.top + spanRect.height / 2) - containerRect.top;
 
-            // Stretchy bounce offset
-            targetY = (dy / dist) * factor * -18;
+            const dx = mouse.x - letterX;
+            const dy = mouse.y - letterY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // Glow intensity
-            targetGlow = factor;
+            if (mouse.active && dist < maxDist) {
+              const factor = (maxDist - dist) / maxDist; // 0 to 1
+
+              // Stretch vertically: pull up and scale Y
+              targetScaleY = 1 + factor * 0.75;
+              
+              // Wobble skew based on horizontal offset relative to cursor
+              targetSkewX = (dx / dist) * factor * -35;
+
+              // Stretchy bounce offset
+              targetY = (dy / dist) * factor * -18;
+
+              // Glow intensity
+              targetGlow = factor;
+            }
           }
-
-          const state = { ...nextStates[i] };
 
           // Spring physics: Y offset
           const forceY = (targetY - state.currentY) * spring;
@@ -148,7 +164,7 @@ export default function AntigravityLogo() {
       <h1 className="sr-only">SANTHOSH & AMBIKA</h1>
       <div className="flex text-lg md:text-xl font-serif font-bold uppercase tracking-[0.22em] text-white">
         {text.split('').map((char, index) => {
-          const state = states[index] || { currentY: 0, currentScaleY: 1, currentSkewX: 0, currentGlow: 0 };
+          const state = states[index] || { currentY: -120, currentScaleY: 1, currentSkewX: 0, currentGlow: 0, opacity: 0 };
           const isSpace = char === ' ';
 
           // Gold color interpolation based on proximity glow
@@ -165,6 +181,7 @@ export default function AntigravityLogo() {
               style={{
                 display: 'inline-block',
                 whiteSpace: 'pre',
+                opacity: state.opacity,
                 transform: `translateY(${state.currentY}px) scaleY(${state.currentScaleY}) skewX(${state.currentSkewX}deg)`,
                 transformOrigin: 'bottom center',
                 color: `rgb(${r}, ${g}, ${b})`,
