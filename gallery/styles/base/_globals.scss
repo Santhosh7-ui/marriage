@@ -1,0 +1,52 @@
+// ═══════════════════════════════════════════════════════
+// BASE — GLOBALS
+// Body defaults, scrollbar, reduced-motion, font loading.
+// ═══════════════════════════════════════════════════════
+
+@use '../abstracts/colors' as c;
+@use '../abstracts/typography' as t;
+
+// ── Body ─────────────────────────────────────────────────
+body {
+  background: c.$bg;
+  color: c.$white;
+  font-family: t.$ff-body;
+  font-weight: t.$fw-light;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ── Next.js root ─────────────────────────────────────────
+#__next,
+main {
+  width: 100%;
+  height: 100%;
+}
+
+// ── Custom Scrollbar ─────────────────────────────────────
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: c.$bg;
+}
+
+::-webkit-scrollbar-thumb {
+  background: c.$gold;
+  border-radius: 3px;
+}
+
+// ── Prefers Reduced Motion ───────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay,
+  .glow-orb,
+  .particle,
+  .scroll-cue__line {
+    animation: none !important;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

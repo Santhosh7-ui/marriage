@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import styles from './AntigravityLogo.module.scss';
 
 export default function AntigravityLogo() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -156,13 +157,13 @@ export default function AntigravityLogo() {
   }, []);
 
   return (
-    <div 
-      ref={containerRef} 
-      className="flex items-center select-none cursor-pointer py-4"
+    <div
+      ref={containerRef}
+      className={styles.container}
       style={{ perspective: '800px' }}
     >
-      <h1 className="sr-only">SANTHOSH & AMBIKA</h1>
-      <div className="flex text-lg md:text-xl font-serif font-bold uppercase tracking-[0.22em] text-white">
+      <h1 className={styles.srOnly}>SANTHOSH &amp; AMBIKA</h1>
+      <div className={styles.letterRow}>
         {text.split('').map((char, index) => {
           const state = states[index] || { currentY: -120, currentScaleY: 1, currentSkewX: 0, currentGlow: 0, opacity: 0 };
           const isSpace = char === ' ';

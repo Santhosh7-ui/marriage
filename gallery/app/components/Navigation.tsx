@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import AntigravityLogo from './AntigravityLogo';
+import styles from './Navigation.module.scss';
 
 interface NavigationProps {
   title: string;
@@ -39,86 +39,77 @@ export default function Navigation({ title, viewMode, setViewMode, isGallery }: 
 
   return (
     <>
-      <header className="absolute top-0 left-0 w-full h-24 md:h-28 z-50 flex items-center justify-between px-6 md:px-16 bg-gradient-to-b from-black/90 via-black/40 to-transparent">
+      <header className={styles.header}>
         {/* Desktop View */}
-        <div className="hidden md:flex items-center w-full justify-between">
+        <div className={styles.desktopRow}>
           {/* Logo / Brand (Left) */}
-          <Link href="/">
+          <a href="/">
             <AntigravityLogo />
-          </Link>
+          </a>
 
-          {/* Centered Navigation Links (Center) */}
-          <nav className="flex items-center gap-10 lg:gap-14 text-[13px] font-semibold uppercase tracking-[0.2em]">
-            <Link 
-              href="/" 
-              className={`transition-all duration-300 hover:text-[#d4af37] hover:[text-shadow:0_0_12px_rgba(212,175,55,0.8)] ${isHomeActive ? 'text-[#d4af37] [text-shadow:0_0_12px_rgba(212,175,55,0.8)]' : 'text-white/70'}`}
+          {/* Centered Navigation Links */}
+          <nav className={styles.nav}>
+            <a
+              href="/"
+              className={`${styles.navLink} ${isHomeActive ? styles['navLink--active'] : ''}`}
             >
               Home
-            </Link>
-            <Link 
-              href="/gallery" 
-              className={`transition-all duration-300 hover:text-[#d4af37] hover:[text-shadow:0_0_12px_rgba(212,175,55,0.8)] ${isGalleryActive ? 'text-[#d4af37] [text-shadow:0_0_12px_rgba(212,175,55,0.8)]' : 'text-white/70'}`}
+            </a>
+            <a
+              href="/gallery"
+              className={`${styles.navLink} ${isGalleryActive ? styles['navLink--active'] : ''}`}
             >
               Gallery
-            </Link>
-            <Link 
-              href="/album" 
-              className={`transition-all duration-300 hover:text-[#d4af37] hover:[text-shadow:0_0_12px_rgba(212,175,55,0.8)] ${isWeddingActive ? 'text-[#d4af37] [text-shadow:0_0_12px_rgba(212,175,55,0.8)]' : 'text-white/70'}`}
+            </a>
+            <a
+              href="/album"
+              className={`${styles.navLink} ${isWeddingActive ? styles['navLink--active'] : ''}`}
             >
               Wedding Album
-            </Link>
-            <Link 
-              href="/album?type=reception" 
-              className={`transition-all duration-300 hover:text-[#d4af37] hover:[text-shadow:0_0_12px_rgba(212,175,55,0.8)] ${isReceptionActive ? 'text-[#d4af37] [text-shadow:0_0_12px_rgba(212,175,55,0.8)]' : 'text-white/70'}`}
+            </a>
+            <a
+              href="/album?type=reception"
+              className={`${styles.navLink} ${isReceptionActive ? styles['navLink--active'] : ''}`}
             >
               Reception Album
-            </Link>
+            </a>
           </nav>
 
           {/* Pill Action Button (Right) */}
           <div>
             {pillAction ? (
-              <button
-                onClick={pillAction}
-                className="px-7 py-3 bg-white text-black font-bold text-[11px] uppercase tracking-[0.15em] rounded-full hover:bg-gray-200 active:scale-95 transition-all shadow-md cursor-pointer"
-              >
+              <button onClick={pillAction} className={styles.pill}>
                 {pillLabel}
               </button>
             ) : (
-              <Link
-                href={pillHref}
-                className="px-7 py-3 bg-white text-black font-bold text-[11px] uppercase tracking-[0.15em] rounded-full hover:bg-gray-200 active:scale-95 inline-block text-center transition-all shadow-md cursor-pointer"
-              >
+              <a href={pillHref} className={styles.pill}>
                 {pillLabel}
-              </Link>
+              </a>
             )}
           </div>
         </div>
 
-        {/* Mobile View - Hamburger & Title */}
-        <div className="md:hidden flex items-center justify-between w-full">
-          <Link href="/" className="text-sm font-serif uppercase tracking-[0.2em] text-white">
+        {/* Mobile View — Hamburger & Brand */}
+        <div className={styles.mobileRow}>
+          <a href="/" className={styles.mobileBrand}>
             S &amp; A
-          </Link>
-          
-          <div className="flex items-center gap-4">
+          </a>
+
+          <div className={styles.mobileActions}>
             {isGallery && setViewMode && viewMode && (
-              <button
-                onClick={pillAction}
-                className="px-4 py-1.5 bg-white/10 text-white border border-white/20 font-semibold text-[9px] uppercase tracking-wider rounded-full active:scale-95 transition-all"
-              >
+              <button onClick={pillAction} className={styles.mobileViewToggle}>
                 {viewMode === 'curved' ? "Carousel" : "Curved"}
               </button>
             )}
-            <button 
+            <button
               onClick={toggleMenu}
-              className="text-white p-2 focus:outline-none z-[60]"
+              className={styles.hamburger}
               aria-label="Toggle Menu"
             >
-              <div className="w-5 h-4 flex flex-col justify-between relative">
-                <span className={`block h-0.5 w-full bg-white transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
-                <span className={`block h-0.5 w-full bg-white transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`} />
-                <span className={`block h-0.5 w-full bg-white transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+              <div className={styles.hamburgerIcon}>
+                <span className={`${styles.bar} ${isOpen ? styles['bar--top-open'] : ''}`} />
+                <span className={`${styles.bar} ${isOpen ? styles['bar--mid-open'] : ''}`} />
+                <span className={`${styles.bar} ${isOpen ? styles['bar--bottom-open'] : ''}`} />
               </div>
             </button>
           </div>
@@ -132,22 +123,22 @@ export default function Navigation({ title, viewMode, setViewMode, isGallery }: 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg flex flex-col items-center justify-center md:hidden"
+            className={styles.mobileOverlay}
           >
-            <div className="flex flex-col gap-6 text-center text-lg font-serif tracking-[0.15em] w-full px-8 uppercase">
-              <Link href="/" onClick={toggleMenu} className="text-white hover:text-[#d4af37] py-3 border-b border-white/10">
+            <nav className={styles.mobileNav}>
+              <a href="/" onClick={toggleMenu} className={styles.mobileNavLink}>
                 Home
-              </Link>
-              <Link href="/gallery" onClick={toggleMenu} className="text-white hover:text-[#d4af37] py-3 border-b border-white/10">
+              </a>
+              <a href="/gallery" onClick={toggleMenu} className={styles.mobileNavLink}>
                 Gallery
-              </Link>
-              <Link href="/album" onClick={toggleMenu} className="text-white hover:text-[#d4af37] py-3 border-b border-white/10">
+              </a>
+              <a href="/album" onClick={toggleMenu} className={styles.mobileNavLink}>
                 3D Wedding Album
-              </Link>
-              <Link href="/album?type=reception" onClick={toggleMenu} className="text-white hover:text-[#d4af37] py-3 border-b border-white/10">
+              </a>
+              <a href="/album?type=reception" onClick={toggleMenu} className={styles.mobileNavLink}>
                 3D Reception Album
-              </Link>
-            </div>
+              </a>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>

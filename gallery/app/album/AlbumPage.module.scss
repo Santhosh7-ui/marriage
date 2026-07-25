@@ -1,0 +1,202 @@
+// ═══════════════════════════════════════════════════════
+// AlbumPage.module.scss
+// The /album page: flipbook + continuous scroll view.
+// ═══════════════════════════════════════════════════════
+
+@use '../../styles/abstracts/colors' as c;
+@use '../../styles/abstracts/animations' as a;
+@use '../../styles/abstracts/radius' as r;
+@use '../../styles/abstracts/spacing' as s;
+@use '../../styles/abstracts/typography' as t;
+@use '../../styles/abstracts/shadows' as sh;
+@use '../../styles/abstracts/mixins' as m;
+
+// ── Page root ─────────────────────────────────────────────
+.page {
+  width: 100%;
+  height: 100vh;
+  background: c.$gallery-dark;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  font-family: sans-serif;
+  color: c.$white;
+}
+
+// ── Suspense fallback ─────────────────────────────────────
+.fallback {
+  width: 100%;
+  height: 100vh;
+  background: c.$gallery-dark;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: c.$gold;
+  font-size: 1.125rem;
+  letter-spacing: 0.2em;
+  font-family: t.$ff-heading;
+}
+
+// ── Loading / empty states ────────────────────────────────
+.loadingState {
+  color: c.$gold;
+  font-size: 1.125rem;
+  letter-spacing: 0.2em;
+  font-family: t.$ff-heading;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.emptyState {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.125rem;
+  letter-spacing: 0.2em;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+// ── Main content wrapper ──────────────────────────────────
+.main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(ellipse at top, #374151 0%, #111827 50%, #000000 100%);
+  position: relative;
+  padding-bottom: s.$space-80;
+}
+
+// ── Flipbook section ──────────────────────────────────────
+.flipbookSection {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: s.$space-96;
+  padding-bottom: s.$space-48;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.flipbookWrap {
+  width: 100%;
+  max-width: 1200px;
+  aspect-ratio: 3 / 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: s.$space-32;
+  margin-bottom: s.$space-48;
+}
+
+// ── Scroll indicator ──────────────────────────────────────
+.scrollHint {
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.75rem;
+  font-weight: t.$fw-semibold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: s.$space-8;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.scrollArrow {
+  font-size: 1.25rem;
+}
+
+// ── Continuous view section ───────────────────────────────
+.continuousSection {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: s.$space-16;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: s.$space-48;
+  margin-top: s.$space-48;
+
+  @include m.sm-up {
+    padding: s.$space-32;
+  }
+}
+
+.continuousHeader {
+  width: 100%;
+  border-top: 1px solid #1f2937;
+  padding-top: s.$space-64;
+  padding-bottom: s.$space-32;
+  text-align: center;
+}
+
+.continuousTitle {
+  font-size: 1.5rem;
+  font-family: t.$ff-heading;
+  color: c.$gold;
+  letter-spacing: 0.2em;
+}
+
+// ── Single continuous scroll page ────────────────────────
+.scrollPage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.pageNumber {
+  position: absolute;
+  left: -3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #374151;
+  font-family: t.$ff-heading;
+  font-size: 1.5rem;
+  display: none;
+  opacity: 0;
+  transition: opacity a.$transition-normal a.$ease-smooth;
+
+  @include m.desktop {
+    display: block;
+  }
+
+  .scrollPage:hover & {
+    opacity: 1;
+  }
+}
+
+.scrollPageImg {
+  width: 100%;
+  height: auto;
+  box-shadow: sh.$shadow-card-xl;
+  border-radius: r.$radius-md;
+  border: 1px solid #1f2937;
+}
+
+// ── Flipbook page template ────────────────────────────────
+.flipbookPage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: transparent;
+}
+
+.flipbookPageImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.5));
+}

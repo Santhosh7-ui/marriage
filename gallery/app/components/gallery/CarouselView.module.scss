@@ -1,0 +1,207 @@
+// ═══════════════════════════════════════════════════════
+// CarouselView.module.scss
+// 3D perspective carousel for the gallery view.
+// ═══════════════════════════════════════════════════════
+
+@use '../../../styles/abstracts/colors' as c;
+@use '../../../styles/abstracts/animations' as a;
+@use '../../../styles/abstracts/radius' as r;
+@use '../../../styles/abstracts/spacing' as s;
+@use '../../../styles/abstracts/typography' as t;
+
+// ── Root container ────────────────────────────────────────
+// perspective is dynamic (1200px) — kept inline in TSX
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+// ── Single carousel card ──────────────────────────────────
+// Width/height use clamp() — kept inline for flexibility
+.card {
+  position: absolute;
+  cursor: pointer;
+  border-radius: r.$radius-2xl;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transform-style: preserve-3d;
+}
+
+// ── Dimmer overlay (inactive cards) ──────────────────────
+.dimmer {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  transition: background a.$transition-normal a.$ease-smooth;
+}
+
+// ── Photo image ───────────────────────────────────────────
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+  display: block;
+}
+
+// ── Photo number badge (top-right) ────────────────────────
+.numberBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: s.$space-16 s.$space-32;
+  border-bottom-left-radius: s.$space-24;  // rounded-bl-3xl
+  font-size: 0.75rem;
+  font-weight: t.$fw-bold;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.9);
+  z-index: 20;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+
+  @media (min-width: 640px) {
+    font-size: 0.875rem;
+  }
+}
+
+// ── Active card details overlay (bottom) ──────────────────
+.detailsOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: s.$space-48 s.$space-64 s.$space-56 s.$space-64;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.4), transparent);
+
+  @media (min-width: 640px) {
+    padding: s.$space-64 s.$space-80 s.$space-80 s.$space-80;
+  }
+}
+
+.detailsTitle {
+  font-size: 1.25rem;
+  font-family: t.$ff-heading;
+  color: c.$white;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 s.$space-16;
+
+  @media (min-width: 640px) {
+    font-size: 1.875rem;
+  }
+}
+
+.detailsSubtitle {
+  font-size: 0.75rem;
+  color: c.$gold;
+  font-weight: t.$fw-semibold;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-top: s.$space-16;
+
+  @media (min-width: 640px) {
+    font-size: 0.875rem;
+  }
+}
+
+// ── Bottom slider ─────────────────────────────────────────
+.sliderWrap {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 400px;
+  z-index: 200;
+}
+
+.slider {
+  width: 100%;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.2);
+  height: 6px;
+  border-radius: r.$radius-full;
+  outline: none;
+  cursor: pointer;
+  transition: background a.$transition-fast a.$ease-smooth;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: c.$white;
+    cursor: pointer;
+  }
+}
+
+// ── Action Buttons ────────────────────────────────────────
+.actionButtons {
+  position: absolute;
+  top: s.$space-16;
+  left: s.$space-16;
+  display: flex;
+  gap: s.$space-12;
+  z-index: 30;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: c.$white;
+  cursor: pointer;
+  transition: all a.$transition-fast a.$ease-smooth;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.favoriteBtn {
+  &:hover {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.5);
+  }
+}
+
+.deleteBtn {
+  &:hover {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.5);
+  }
+}
