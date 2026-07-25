@@ -1,122 +1,45 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function AntigravityLogo() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const mouseRef = useRef({ x: -1000, y: -1000, active: false, vx: 0, vy: 0, lastX: 0, lastY: 0 });
+  const lettersRef = useRef<(HTMLSpanElement | null)[]>([]);
+  const text = "SANTHOSH & AMBIKA";
+
+  // Physics state for each letter
+  const [states, setStates] = useState(() => 
+    text.split('').map(() => ({
+      currentY: 0,
+      targetY: 0,
+      vy: 0,
+      currentScaleY: 1,
+      targetScaleY: 1,
+      vScale: 0,
+      currentSkewX: 0,
+      targetSkewX: 0,
+      vSkew: 0,
+      currentGlow: 0,
+      targetGlow: 0,
+      vGlow: 0
+    }))
+  );
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    let animationFrameId: number;
+    const mouse = { x: -1000, y: -1000, active: false };
 
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    if (!ctx) return;
-
-    // Logical dimensions for the logo canvas
-    const logicalWidth = 320;
-    const logicalHeight = 64;
-    let dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
-
-    // Setup canvas resolution for High-DPI screens
-    const setupCanvas = () => {
-      dpr = window.devicePixelRatio || 1;
-      canvas.width = logicalWidth * dpr;
-      canvas.height = logicalHeight * dpr;
-      canvas.style.width = `${logicalWidth}px`;
-      canvas.style.height = `${logicalHeight}px`;
-      ctx.scale(dpr, dpr);
-    };
-
-    setupCanvas();
-
-    // Particle definition
-    interface Particle {
-      x: number;
-      y: number;
-      originX: number;
-      originY: number;
-      vx: number;
-      vy: number;
-      radius: number;
-      density: number;
-      swayOffset: number;
-      swaySpeed: number;
-      color: string;
-    }
-
-    let particles: Particle[] = [];
-
-    // Render text to offscreen canvas to extract pixels
-    const initParticles = () => {
-      const offscreen = document.createElement('canvas');
-      offscreen.width = logicalWidth;
-      offscreen.height = logicalHeight;
-      const oCtx = offscreen.getContext('2d');
-      if (!oCtx) return;
-
-      // Draw brand text on offscreen canvas
-      oCtx.fillStyle = '#ffffff';
-      // Use premium serif typography (Georgia / Times New Roman)
-      oCtx.font = 'bold 22px Georgia, "Times New Roman", serif';
-      oCtx.textBaseline = 'middle';
-      oCtx.textAlign = 'left';
-      oCtx.letterSpacing = '5px'; // Modern tracking
-      
-      // Center vertically and leave a bit of margin on the left
-      oCtx.fillText('SANTHOSH & AMBIKA', 10, logicalHeight / 2);
-
-      const imgData = oCtx.getImageData(0, 0, logicalWidth, logicalHeight);
-      const data = imgData.data;
-      particles = [];
-
-      // Scan pixels (step 2 for dense but high-performance display)
-      const step = 2;
-      for (let y = 0; y < logicalHeight; y += step) {
-        for (let x = 0; x < logicalWidth; x += step) {
-          const index = (y * logicalWidth + x) * 4;
-          const alpha = data[index + 3];
-
-          if (alpha > 128) {
-            particles.push({
-              x: x,
-              y: y,
-              originX: x,
-              originY: y,
-              vx: 0,
-              vy: 0,
-              radius: Math.random() * 0.7 + 0.5, // Tiny crisp circular dots
-              density: Math.random() * 20 + 10,
-              swayOffset: Math.random() * Math.PI * 2,
-              swaySpeed: Math.random() * 0.05 + 0.02,
-              color: 'rgba(255, 255, 255, 0.95)'
-            });
-          }
-        }
-      }
-    };
-
-    initParticles();
-
-    // Mouse movement event handlers
+    // Update mouse position relative to container
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const mouse = mouseRef.current;
-      const currentX = e.clientX - rect.left;
-      const currentY = e.clientY - rect.top;
-
-      mouse.vx = currentX - mouse.lastX;
-      mouse.vy = currentY - mouse.lastY;
-      mouse.x = currentX;
-      mouse.y = currentY;
-      mouse.lastX = currentX;
-      mouse.lastY = currentY;
+      const container = containerRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
       mouse.active = true;
     };
 
     const handleMouseLeave = () => {
-      const mouse = mouseRef.current;
       mouse.active = false;
       mouse.x = -1000;
       mouse.y = -1000;
@@ -128,80 +51,87 @@ export default function AntigravityLogo() {
       container.addEventListener('mouseleave', handleMouseLeave);
     }
 
-    // Animation settings
-    const hoverRadius = 65; // Proximity threshold
-    const springStrength = 0.06;
-    const friction = 0.85;
-    let time = 0;
-
-    let animationId: number;
+    const spring = 0.08;
+    const dampening = 0.72;
+    const maxDist = 90; // Proximity threshold
 
     const animate = () => {
-      time += 0.02;
-      ctx.clearRect(0, 0, logicalWidth, logicalHeight);
+      setStates((prevStates) => {
+        const nextStates = [...prevStates];
+        const container = containerRef.current;
+        if (!container) return prevStates;
 
-      const mouse = mouseRef.current;
+        const containerRect = container.getBoundingClientRect();
 
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
+        for (let i = 0; i < text.length; i++) {
+          const span = lettersRef.current[i];
+          if (!span) continue;
 
-        // Calculate distance from particle to mouse
-        const dx = mouse.x - p.x;
-        const dy = mouse.y - p.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+          // Find center position of the letter span relative to container
+          const spanRect = span.getBoundingClientRect();
+          const letterX = (spanRect.left + spanRect.width / 2) - containerRect.left;
+          const letterY = (spanRect.top + spanRect.height / 2) - containerRect.top;
 
-        if (mouse.active && dist < hoverRadius) {
-          // Antigravity upward lift force
-          // The closer the mouse is, the stronger the upward acceleration
-          const force = (hoverRadius - dist) / hoverRadius;
-          const lift = force * 1.8;
+          const dx = mouse.x - letterX;
+          const dy = mouse.y - letterY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
 
-          // Upward force + slight horizontal dispersal
-          p.vy -= lift + (Math.abs(mouse.vy) * 0.05);
-          p.vx += (dx / dist) * -0.3 + (mouse.vx * 0.03);
-          
-          // Add a weightless side sway
-          p.x += Math.sin(time + p.swayOffset) * 0.15;
-        } else {
-          // Return to origin state using natural dampening spring formula
-          const homeDx = p.originX - p.x;
-          const homeDy = p.originY - p.y;
+          let targetY = 0;
+          let targetScaleY = 1;
+          let targetSkewX = 0;
+          let targetGlow = 0;
 
-          p.vx += homeDx * springStrength;
-          p.vy += homeDy * springStrength;
+          if (mouse.active && dist < maxDist) {
+            const factor = (maxDist - dist) / maxDist; // 0 to 1
+
+            // Stretch vertically: pull up and scale Y
+            targetScaleY = 1 + factor * 0.75;
+            
+            // Wobble skew based on horizontal offset relative to cursor
+            targetSkewX = (dx / dist) * factor * -35;
+
+            // Stretchy bounce offset
+            targetY = (dy / dist) * factor * -18;
+
+            // Glow intensity
+            targetGlow = factor;
+          }
+
+          const state = { ...nextStates[i] };
+
+          // Spring physics: Y offset
+          const forceY = (targetY - state.currentY) * spring;
+          state.vy = (state.vy + forceY) * dampening;
+          state.currentY += state.vy;
+
+          // Spring physics: Scale Y
+          const forceScale = (targetScaleY - state.currentScaleY) * spring;
+          state.vScale = (state.vScale + forceScale) * dampening;
+          state.currentScaleY += state.vScale;
+
+          // Spring physics: Skew X
+          const forceSkew = (targetSkewX - state.currentSkewX) * spring;
+          state.vSkew = (state.vSkew + forceSkew) * dampening;
+          state.currentSkewX += state.vSkew;
+
+          // Spring physics: Glow
+          const forceGlow = (targetGlow - state.currentGlow) * spring;
+          state.vGlow = (state.vGlow + forceGlow) * dampening;
+          state.currentGlow += state.vGlow;
+
+          nextStates[i] = state;
         }
 
-        // Apply friction/dampening
-        p.vx *= friction;
-        p.vy *= friction;
+        return nextStates;
+      });
 
-        // Update positions
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Draw crisp circular dot
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
-      }
-
-      animationId = requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     };
 
     animate();
 
-    // Handle screen resize
-    const handleResize = () => {
-      setupCanvas();
-      initParticles();
-    };
-
-    window.addEventListener('resize', handleResize);
-
     return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
       if (container) {
         container.removeEventListener('mousemove', handleMouseMove);
         container.removeEventListener('mouseleave', handleMouseLeave);
@@ -210,12 +140,46 @@ export default function AntigravityLogo() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative select-none cursor-pointer flex items-center justify-start w-[320px] h-[64px]">
-      {/* Visual Canvas containing the particle text effect */}
-      <canvas ref={canvasRef} className="block pointer-events-none" />
+    <div 
+      ref={containerRef} 
+      className="flex items-center select-none cursor-pointer py-4"
+      style={{ perspective: '800px' }}
+    >
+      <h1 className="sr-only">SANTHOSH & AMBIKA</h1>
+      <div className="flex text-lg md:text-xl font-serif font-bold uppercase tracking-[0.22em] text-white">
+        {text.split('').map((char, index) => {
+          const state = states[index] || { currentY: 0, currentScaleY: 1, currentSkewX: 0, currentGlow: 0 };
+          const isSpace = char === ' ';
 
-      {/* SEO Friendly visually hidden text */}
-      <span className="sr-only">SANTHOSH & AMBIKA</span>
+          // Gold color interpolation based on proximity glow
+          const r = Math.round(255 - (255 - 212) * state.currentGlow);
+          const g = Math.round(255 - (255 - 175) * state.currentGlow);
+          const b = Math.round(255 - (255 - 55) * state.currentGlow);
+
+          return (
+            <span
+              key={index}
+              ref={(el) => {
+                lettersRef.current[index] = el;
+              }}
+              style={{
+                display: 'inline-block',
+                whiteSpace: 'pre',
+                transform: `translateY(${state.currentY}px) scaleY(${state.currentScaleY}) skewX(${state.currentSkewX}deg)`,
+                transformOrigin: 'bottom center',
+                color: `rgb(${r}, ${g}, ${b})`,
+                textShadow: state.currentGlow > 0.05 
+                  ? `0 0 ${state.currentGlow * 15}px rgba(212, 175, 55, ${state.currentGlow * 0.9})` 
+                  : 'none',
+                paddingRight: isSpace ? '0.4em' : '2px',
+                pointerEvents: 'none'
+              }}
+            >
+              {char}
+            </span>
+          );
+        })}
+      </div>
     </div>
   );
 }
