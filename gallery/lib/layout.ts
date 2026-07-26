@@ -44,7 +44,7 @@ export function computeLayout(photos: PhotoRecord[]): LayoutPhoto[] {
   }
 
   const numConstellations = heroes.length;
-  const constellations = heroes.map(hero => ({
+  const constellations: Constellation[] = heroes.map((hero) => ({
     hero,
     primaries: [] as PhotoRecord[],
     supporting: [] as PhotoRecord[]
@@ -70,8 +70,21 @@ export function computeLayout(photos: PhotoRecord[]): LayoutPhoto[] {
   return layout;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function constrainPhotos(constellations: any[], layout: any[], cols: number, clusterSpacing: number, gridW: number, gridH: number, globalRand: () => number) {
+interface Constellation {
+  hero: PhotoRecord;
+  primaries: PhotoRecord[];
+  supporting: PhotoRecord[];
+}
+
+function constrainPhotos(
+  constellations: Constellation[],
+  layout: LayoutPhoto[],
+  cols: number,
+  clusterSpacing: number,
+  gridW: number,
+  gridH: number,
+  globalRand: () => number,
+) {
   constellations.forEach((cluster, i) => {
     const col = i % cols;
     const row = Math.floor(i / cols);
@@ -93,7 +106,7 @@ function constrainPhotos(constellations: any[], layout: any[], cols: number, clu
 
     // 2. Position Primaries (orbiting hero closely, forming flow)
     let angle = rand() * Math.PI * 2;
-    cluster.primaries.forEach((p: PhotoRecord) => {
+    cluster.primaries.forEach((p) => {
       const tier = getTier(p);
       const childH = BASE_SCALE * getScaleMultiplier(tier, rand);
       const childW = p.aspectRatio * childH;
@@ -114,7 +127,7 @@ function constrainPhotos(constellations: any[], layout: any[], cols: number, clu
     let suppAngle = rand() * Math.PI * 2;
     let suppRadiusBase = heroW * 1.2;
 
-    cluster.supporting.forEach((p: PhotoRecord) => {
+    cluster.supporting.forEach((p) => {
       const tier = getTier(p);
       const childH = BASE_SCALE * getScaleMultiplier(tier, rand);
       const childW = p.aspectRatio * childH;

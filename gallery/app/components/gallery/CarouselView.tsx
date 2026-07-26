@@ -48,7 +48,7 @@ export default function CarouselView({ photos, selectedIndex, onSelect, onDelete
 
           return (
               <motion.div
-                key={index}
+                key={photoKey}
                 className={styles.card}
                 style={{
                   width: 'clamp(300px, 35vw, 460px)',
@@ -78,7 +78,7 @@ export default function CarouselView({ photos, selectedIndex, onSelect, onDelete
 
               <img
                 src={`/api/image?key=${encodeURIComponent(photoKey)}`}
-                alt={`Gallery ${index}`}
+                alt={`Gallery photo ${index + 1}`}
                 className={styles.photo}
                 draggable={false}
                 loading={isCenter ? "eager" : "lazy"}
@@ -94,9 +94,6 @@ export default function CarouselView({ photos, selectedIndex, onSelect, onDelete
               {/* Details Overlay (Only active card) */}
               {isCenter && (
                 <div className={styles.detailsOverlay}>
-                  <h3 className={styles.detailsTitle}>
-                    {photoKey.split('/').pop()?.split('.').shift()?.replace(/_/g, ' ') || 'Wedding Moment'}
-                  </h3>
                   <p className={styles.detailsSubtitle}>
                     Santhosh &amp; Ambika
                   </p>

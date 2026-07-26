@@ -18,7 +18,7 @@
   left: 0;
   width: 100%;
   height: 6rem;          // 96px — matches h-24
-  z-index: 50;
+  z-index: 300;  // must be above carousel cards (100) and slider (200)
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -155,7 +155,7 @@
   color: c.$white;
   padding: s.$space-8;
   cursor: pointer;
-  z-index: 60;
+  z-index: 310; // above the header
 
   &:focus {
     outline: none;
@@ -187,7 +187,7 @@
 .mobileOverlay {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 300; // same as header — covers full screen
   background: rgba(0, 0, 0, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);

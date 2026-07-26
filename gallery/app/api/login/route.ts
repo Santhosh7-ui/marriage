@@ -11,6 +11,7 @@ export async function POST(request: Request) {
         name: 'guest_auth',
         value: 'true',
         httpOnly: true,
+        sameSite: 'lax',           // ← prevents CSRF
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 30, // 30 days
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Incorrect password' }, { status: 401 });
     }
   } catch (e: unknown) {
+    console.error('Login error:', e);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }

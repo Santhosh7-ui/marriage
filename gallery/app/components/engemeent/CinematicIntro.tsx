@@ -28,9 +28,9 @@ export default function CinematicIntro() {
 
     lenis.on('scroll', ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
+    // Store the ticker callback so we can remove it on cleanup
+    const lenisUpdate = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(lenisUpdate);
     gsap.ticker.lagSmoothing(0);
 
     // Run custom animations
@@ -41,10 +41,11 @@ export default function CinematicIntro() {
     }, containerRef);
 
     return () => {
+      gsap.ticker.remove(lenisUpdate); // ← prevents stacked ticker callbacks on re-mount
       lenis.destroy();
       ctx.revert();
     };
-  }, [router]);
+  }, []);
 
   return (
     <div ref={containerRef} className={styles.wrapper}>

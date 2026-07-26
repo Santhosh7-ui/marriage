@@ -57,38 +57,42 @@ export default function GlimpsesGallery() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Title entrance — targets global .glimpses-title class
-    gsap.fromTo('.glimpses-title',
-      { opacity: 0, y: 50, filter: 'blur(6px)' },
-      {
-        opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.4, ease: 'power4.out',
-        scrollTrigger: { trigger: '.glimpses-title', start: 'top 85%', toggleActions: 'play none none none' }
-      }
-    );
-
-    gsap.fromTo('.glimpses-ornament',
-      { scaleX: 0, opacity: 0 },
-      {
-        scaleX: 1, opacity: 1, duration: 1.2, ease: 'power4.out',
-        scrollTrigger: { trigger: '.glimpses-ornament', start: 'top 88%', toggleActions: 'play none none none' }
-      }
-    );
-
-    // Cards stagger — targets global .glimpse-card class
-    const cards = sectionRef.current?.querySelectorAll('.glimpse-card');
-    cards?.forEach((card, i) => {
-      const fromX = i % 2 === 0 ? -60 : 60;
-      gsap.fromTo(card,
-        { opacity: 0, x: fromX, y: 40 },
+    // Scope all animations to this component's context so cleanup is scoped
+    const ctx = gsap.context(() => {
+      // Title entrance — targets global .glimpses-title class
+      gsap.fromTo('.glimpses-title',
+        { opacity: 0, y: 50, filter: 'blur(6px)' },
         {
-          opacity: 1, x: 0, y: 0, duration: 1.1, ease: 'power4.out',
-          scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: 'play none none none' },
-          delay: (Math.floor(i / 2) % 2) * 0.12,
+          opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.4, ease: 'power4.out',
+          scrollTrigger: { trigger: '.glimpses-title', start: 'top 85%', toggleActions: 'play none none none' }
         }
       );
-    });
 
-    return () => { ScrollTrigger.getAll().forEach(t => t.kill()); };
+      gsap.fromTo('.glimpses-ornament',
+        { scaleX: 0, opacity: 0 },
+        {
+          scaleX: 1, opacity: 1, duration: 1.2, ease: 'power4.out',
+          scrollTrigger: { trigger: '.glimpses-ornament', start: 'top 88%', toggleActions: 'play none none none' }
+        }
+      );
+
+      // Cards stagger — targets global .glimpse-card class
+      const cards = sectionRef.current?.querySelectorAll('.glimpse-card');
+      cards?.forEach((card, i) => {
+        const fromX = i % 2 === 0 ? -60 : 60;
+        gsap.fromTo(card,
+          { opacity: 0, x: fromX, y: 40 },
+          {
+            opacity: 1, x: 0, y: 0, duration: 1.1, ease: 'power4.out',
+            scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: 'play none none none' },
+            delay: (Math.floor(i / 2) % 2) * 0.12,
+          }
+        );
+      });
+    }, sectionRef);
+
+    // ctx.revert() only cleans up triggers/animations created inside this context
+    return () => { ctx.revert(); };
   }, []);
 
   return (

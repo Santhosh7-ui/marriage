@@ -16,6 +16,7 @@ export default function SocialCarousel() {
     async function fetchCarouselPhotos() {
       try {
         const res = await fetch('/api/photos?prefix=carousel/');
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
         const data = await res.json();
         setPhotos(data.photos || []);
       } catch (err) {

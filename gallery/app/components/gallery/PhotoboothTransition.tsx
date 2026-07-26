@@ -13,6 +13,7 @@ const PhotoboothTransition = () => {
     const fetchPhotos = async () => {
       try {
         const response = await fetch('/api/photos?prefix=favorites/');
+        if (!response.ok) throw new Error(`API error: ${response.status}`);
         const data = await response.json();
         if (data.photos && data.photos.length > 0) {
           // Convert keys to api/image URLs
