@@ -70,6 +70,7 @@ export function computeLayout(photos: PhotoRecord[]): LayoutPhoto[] {
   return layout;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function constrainPhotos(constellations: any[], layout: any[], cols: number, clusterSpacing: number, gridW: number, gridH: number, globalRand: () => number) {
   constellations.forEach((cluster, i) => {
     const col = i % cols;

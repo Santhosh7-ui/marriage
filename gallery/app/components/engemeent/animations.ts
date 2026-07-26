@@ -57,6 +57,7 @@ export function initAnimations() {
   (function initScrollReveals() {
     document.querySelectorAll('.reveal-text[data-split]').forEach((el) => {
       const element = el as HTMLElement;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const splitType = (element.dataset.split || 'words') as any;
       const split = new SplitType(element, { types: splitType });
       const targets = splitType === 'chars' ? split.chars : split.words;
@@ -162,6 +163,7 @@ export function initAnimations() {
 
   /* ─── 12. SECTION-WIDE BACKGROUND PARALLAX ────────────────────── */
   (function initParallax() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     gsap.utils.toArray('.glow-orb').forEach((orb: any, i) => {
       gsap.to(orb, {
         y: i % 2 === 0 ? -80 : 80,
@@ -278,7 +280,7 @@ export function initAnimations() {
     if (!ctx) return;
 
     let particles: Particle[] = [];
-    let mouse = { x: -9999, y: -9999, radius: 100 };
+    const mouse = { x: -9999, y: -9999, radius: 100 };
     let width: number, height: number;
 
     const colors = ['#50b79e', '#77d4c0', '#d4af37', '#e6c875', '#b39ddb', '#ffffff'];
@@ -320,16 +322,16 @@ export function initAnimations() {
       }
 
       update() {
-        let dx = mouse.x - this.x;
-        let dy = mouse.y - this.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance < mouse.radius) {
-          let forceDirectionX = dx / distance;
-          let forceDirectionY = dy / distance;
-          let force = (mouse.radius - distance) / mouse.radius;
-          let directionX = forceDirectionX * force * -7;
-          let directionY = forceDirectionY * force * -7;
+          const forceDirectionX = dx / distance;
+          const forceDirectionY = dy / distance;
+          const force = (mouse.radius - distance) / mouse.radius;
+          const directionX = forceDirectionX * force * -7;
+          const directionY = forceDirectionY * force * -7;
 
           this.vx += directionX;
           this.vy += directionY;
@@ -398,7 +400,7 @@ export function initAnimations() {
       }
     }
 
-    let fallingParticles: FallingParticle[] = [];
+    const fallingParticles: FallingParticle[] = [];
 
     function createText() {
       particles = [];
@@ -497,14 +499,18 @@ export function initAnimations() {
       mouse.y = clientY - rect.top;
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     canvas.addEventListener('mousemove', trackMouse as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     canvas.addEventListener('touchmove', trackMouse as any, { passive: true });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     canvas.addEventListener('touchstart', trackMouse as any, { passive: true });
 
     const resetMouse = () => { mouse.x = -9999; mouse.y = -9999; };
     canvas.addEventListener('mouseleave', resetMouse);
     canvas.addEventListener('touchend', resetMouse);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let resizeTimer: any;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);

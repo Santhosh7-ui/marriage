@@ -49,8 +49,8 @@ export async function GET(request: NextRequest) {
         'Cache-Control': 'public, max-age=31536000, immutable',
       },
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Error fetching image from R2:', e);
-    return new NextResponse(e.message, { status: 500 });
+    return new NextResponse((e as Error).message, { status: 500 });
   }
 }

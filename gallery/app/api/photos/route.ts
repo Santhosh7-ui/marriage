@@ -63,9 +63,9 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json({ photos });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Error fetching photo list from R2:', e);
-    return new NextResponse(e.message, { status: 500 });
+    return new NextResponse((e as Error).message, { status: 500 });
   }
 }
 
@@ -84,9 +84,9 @@ export async function DELETE(request: Request) {
     if (!response.ok) throw new Error(await response.text());
 
     return NextResponse.json({ success: true, message: 'Photo deleted successfully' });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Error deleting photo from R2:', e);
-    return new NextResponse(e.message, { status: 500 });
+    return new NextResponse((e as Error).message, { status: 500 });
   }
 }
 
@@ -114,8 +114,8 @@ export async function POST(request: Request) {
     if (!response.ok) throw new Error(await response.text());
 
     return NextResponse.json({ success: true, message: 'Photo favorited successfully' });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Error favoriting photo in R2:', e);
-    return new NextResponse(e.message, { status: 500 });
+    return new NextResponse((e as Error).message, { status: 500 });
   }
 }

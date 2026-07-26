@@ -125,7 +125,7 @@ export default function GalleryPage() {
         title="Santhosh & Ambika"
         isGallery={true}
         viewMode={viewMode}
-        setViewMode={(mode: any) => setViewMode(mode)}
+        setViewMode={(mode: string) => setViewMode(mode as 'carousel' | 'curved')}
       />
 
       {/* Main Content Area */}
