@@ -1,16 +1,15 @@
-import { S3Client, ListObjectsV2Command, DeleteObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
+import { AwsClient } from 'aws4fetch';
 import { NextResponse } from 'next/server';
 
-const s3 = new S3Client({
-  region: 'auto',
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-  },
-});
+export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
-export const dynamic = 'force-dynamic'; // Disable all caching
+const aws = new AwsClient({
+  accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+  secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+  service: 's3',
+  region: 'auto',
+});
 
 export async function GET(request: Request) {
   try {
@@ -18,46 +17,48 @@ export async function GET(request: Request) {
     const prefix = searchParams.get('prefix') || '';
 
     const bucketName = process.env.R2_BUCKET_NAME || 'wedding-photos';
-    const command = new ListObjectsV2Command({
-      Bucket: bucketName,
-      Prefix: prefix ? prefix : undefined,
-    });
-
-    const response = await s3.send(command);
+    const accountId = process.env.R2_ACCOUNT_ID;
     
-    // Filter out directories or empty keys
-    const allValidKeys = (response.Contents || [])
-      .filter(item => item.Key && item.Size && item.Size > 0)
-      .map(item => item.Key as string);
+    const url = new URL(`https://${accountId}.r2.cloudflarestorage.com/${bucketName}`);
+    url.searchParams.set('list-type', '2');
+    if (prefix) {
+      url.searchParams.set('prefix', prefix);
+    }
+
+    const response = await aws.fetch(url);
+    if (!response.ok) throw new Error(await response.text());
+    
+    const text = await response.text();
+    const contentsRegex = /<Contents>[\s\S]*?<Key>(.*?)<\/Key>[\s\S]*?<Size>(.*?)<\/Size>[\s\S]*?<\/Contents>/g;
+    const allValidKeys: string[] = [];
+    
+    let match;
+    while ((match = contentsRegex.exec(text)) !== null) {
+      const key = match[1];
+      const size = parseInt(match[2], 10);
+      if (key && size > 0) {
+        allValidKeys.push(key);
+      }
+    }
 
     let photos = [];
 
     if (prefix) {
-      // If fetching a specific album (like reception), just return those sorted
-      photos = allValidKeys
-        .filter(key => key.startsWith(prefix))
-        .sort();
+      photos = allValidKeys.filter(key => key.startsWith(prefix)).sort();
     } else {
-      // If no prefix, it's the main gallery
-      // 1. Remove album photos and thumbnail directory (they are handled differently)
       const galleryKeys = allValidKeys.filter(key => 
         !key.includes('album/') && !key.includes('images/thumbnails/')
       );
 
-      // 2. Separate favorites from regular photos
       const favorites = galleryKeys.filter(key => key.startsWith('favorites/'));
       const regular = galleryKeys.filter(key => !key.startsWith('favorites/'));
-
-      // 3. Extract the basenames (filenames) of the favorites to use for deduplication
       const favoriteFilenames = new Set(favorites.map(key => key.split('/').pop()));
 
-      // 4. Filter regular photos: keep only those whose filename is NOT in the favorites set
       const deduplicatedRegular = regular.filter(key => {
         const filename = key.split('/').pop();
         return !favoriteFilenames.has(filename);
       });
 
-      // 5. Combine them: favorites first, then the rest
       photos = [...favorites.sort(), ...deduplicatedRegular.sort()];
     }
 
@@ -72,18 +73,15 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const key = searchParams.get('key');
-
-    if (!key) {
-      return new NextResponse('Key is required', { status: 400 });
-    }
+    if (!key) return new NextResponse('Key is required', { status: 400 });
 
     const bucketName = process.env.R2_BUCKET_NAME || 'wedding-photos';
-    const command = new DeleteObjectCommand({
-      Bucket: bucketName,
-      Key: key,
-    });
-
-    await s3.send(command);
+    const accountId = process.env.R2_ACCOUNT_ID;
+    
+    const url = new URL(`https://${accountId}.r2.cloudflarestorage.com/${bucketName}/${encodeURIComponent(key)}`);
+    const response = await aws.fetch(url, { method: 'DELETE' });
+    
+    if (!response.ok) throw new Error(await response.text());
 
     return NextResponse.json({ success: true, message: 'Photo deleted successfully' });
   } catch (e: any) {
@@ -95,24 +93,25 @@ export async function DELETE(request: Request) {
 export async function POST(request: Request) {
   try {
     const { key, action } = await request.json();
-
-    if (!key || action !== 'favorite') {
-      return new NextResponse('Invalid request', { status: 400 });
-    }
+    if (!key || action !== 'favorite') return new NextResponse('Invalid request', { status: 400 });
 
     const bucketName = process.env.R2_BUCKET_NAME || 'wedding-photos';
+    const accountId = process.env.R2_ACCOUNT_ID;
     
-    // Extract filename from the key (e.g. "gallery/photo1.jpg" -> "photo1.jpg")
     const filename = key.split('/').pop();
     const destinationKey = `favorites/${filename}`;
 
-    const command = new CopyObjectCommand({
-      Bucket: bucketName,
-      CopySource: `${bucketName}/${key}`, // Note: CopySource must be url-encoded if it contains spaces, but AWS SDK often handles it. Format is bucket/key.
-      Key: destinationKey,
+    const url = new URL(`https://${accountId}.r2.cloudflarestorage.com/${bucketName}/${encodeURIComponent(destinationKey)}`);
+    const copySource = `/${bucketName}/${encodeURIComponent(key)}`;
+    
+    const response = await aws.fetch(url, {
+      method: 'PUT',
+      headers: {
+        'x-amz-copy-source': copySource
+      }
     });
-
-    await s3.send(command);
+    
+    if (!response.ok) throw new Error(await response.text());
 
     return NextResponse.json({ success: true, message: 'Photo favorited successfully' });
   } catch (e: any) {
@@ -120,4 +119,3 @@ export async function POST(request: Request) {
     return new NextResponse(e.message, { status: 500 });
   }
 }
-

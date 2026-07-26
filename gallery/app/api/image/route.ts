@@ -1,13 +1,13 @@
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { AwsClient } from 'aws4fetch';
 import { NextRequest, NextResponse } from 'next/server';
 
-const s3 = new S3Client({
+export const runtime = 'edge';
+
+const aws = new AwsClient({
+  accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+  secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+  service: 's3',
   region: 'auto',
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-  },
 });
 
 export async function GET(request: NextRequest) {
@@ -16,16 +16,19 @@ export async function GET(request: NextRequest) {
   if (!key) return new NextResponse('Missing key', { status: 400 });
 
   try {
-    const command = new GetObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME || 'wedding-photos',
-      Key: key,
-    });
-    const response = await s3.send(command);
+    const bucketName = process.env.R2_BUCKET_NAME || 'wedding-photos';
+    const accountId = process.env.R2_ACCOUNT_ID;
+    const url = new URL(`https://${accountId}.r2.cloudflarestorage.com/${bucketName}/${encodeURIComponent(key)}`);
     
-    // We can stream the response body directly using NextResponse
-    return new NextResponse(response.Body as any, {
+    const response = await aws.fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.statusText}`);
+    }
+
+    return new NextResponse(response.body, {
       headers: {
-        'Content-Type': response.ContentType || 'image/webp',
+        'Content-Type': response.headers.get('content-type') || 'image/jpeg',
         'Cache-Control': 'public, max-age=31536000, immutable',
       },
     });
