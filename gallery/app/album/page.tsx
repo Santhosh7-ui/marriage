@@ -6,18 +6,40 @@ import HTMLFlipBook from 'react-pageflip';
 import Navigation from '@/app/components/Navigation';
 import styles from './AlbumPage.module.scss';
 
-const FlipBook = HTMLFlipBook as any;
+// Minimal prop interface for the FlipBook component
+interface FlipBookProps {
+  width: number;
+  height: number;
+  size?: 'fixed' | 'stretch';
+  minWidth?: number;
+  maxWidth?: number;
+  minHeight?: number;
+  maxHeight?: number;
+  maxShadowOpacity?: number;
+  showCover?: boolean;
+  mobileScrollSupport?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}
 
-const Page = React.forwardRef((props: { image: string, number: number }, ref) => {
+// Cast once with a typed interface instead of `any`
+const FlipBook = HTMLFlipBook as unknown as React.ComponentType<FlipBookProps>;
+
+interface PageProps {
+  image: string;
+  number: number;
+}
+
+const Page = React.forwardRef<HTMLDivElement, PageProps>((props, ref) => {
   return (
-    <div className={styles.flipbookPage} ref={ref as any} data-density="soft">
-      <div className={styles.flipbookPage}>
-        <img
-          src={props.image}
-          alt={`Page ${props.number}`}
-          className={styles.flipbookPageImg}
-        />
-      </div>
+    // Removed the duplicate nested div that had the same class
+    <div className={styles.flipbookPage} ref={ref} data-density="soft">
+      <img
+        src={props.image}
+        alt={`Page ${props.number}`}
+        className={styles.flipbookPageImg}
+      />
     </div>
   );
 });
@@ -32,15 +54,19 @@ function AlbumContent() {
 
   const [pages, setPages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchAlbumPages() {
       try {
         const res = await fetch(`/api/photos?prefix=${encodeURIComponent(prefix)}`);
+        // Check res.ok before attempting to parse JSON
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
         const data = await res.json();
         setPages(data.photos || []);
       } catch (err) {
         console.error('Failed to fetch album pages', err);
+        setError('Could not load album pages. Please try refreshing.');
       } finally {
         setLoading(false);
       }
@@ -60,6 +86,21 @@ function AlbumContent() {
         <div className={styles.flipbookSection}>
           {loading ? (
             <div className={styles.loadingState}>Opening Album...</div>
+          ) : error ? (
+            <div className={styles.emptyState} style={{ color: '#ff6b6b' }}>
+              {error}
+              <br />
+              <button
+                onClick={() => { setError(null); setLoading(true); window.location.reload(); }}
+                style={{
+                  marginTop: '1rem', padding: '10px 24px', borderRadius: '50px',
+                  background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.3)',
+                  color: 'white', cursor: 'pointer', fontSize: '0.9rem',
+                }}
+              >
+                Retry
+              </button>
+            </div>
           ) : pages.length === 0 ? (
             <div className={styles.emptyState}>No album pages found.</div>
           ) : (
@@ -80,7 +121,11 @@ function AlbumContent() {
                   style={{}}
                 >
                   {pages.map((photoKey, i) => (
-                    <Page key={photoKey} image={`/api/image?key=${encodeURIComponent(photoKey)}`} number={i + 1} />
+                    <Page
+                      key={photoKey}
+                      image={`/api/image?key=${encodeURIComponent(photoKey)}`}
+                      number={i + 1}
+                    />
                   ))}
                 </FlipBook>
               </div>
@@ -95,14 +140,14 @@ function AlbumContent() {
         </div>
 
         {/* Continuous Scroll View Section */}
-        {!loading && pages.length > 0 && (
+        {!loading && !error && pages.length > 0 && (
           <div className={styles.continuousSection}>
             <div className={styles.continuousHeader}>
               <h2 className={styles.continuousTitle}>Continuous View</h2>
             </div>
 
             {pages.map((photoKey, i) => (
-              <div key={`scroll-${i}`} className={styles.scrollPage}>
+              <div key={`scroll-${photoKey}`} className={styles.scrollPage}>
                 {/* Page Number Indicator */}
                 <div className={styles.pageNumber}>{i + 1}</div>
 

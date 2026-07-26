@@ -1,55 +1,62 @@
 .loginContainer {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;          // min-height so it expands if content is tall
+  min-height: 100dvh;         // dvh respects mobile browser chrome
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   background: linear-gradient(135deg, #e0c3fc 0%, #ffc3a0 100%);
 
+  // Reserve space for the character floating above the card on all screen sizes
+  padding: 120px 16px 40px;   // top: 120px = half of character (250px/2) + 10px gap
+  box-sizing: border-box;
 }
 
 .loginCard {
   position: relative;
   z-index: 2;
-  width: 90%;
+  width: 100%;
   max-width: 400px;
-  background: rgba(255, 255, 255, 0.85); /* Slightly translucent for that neumorphic vibe */
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 40px;
   padding: 40px 30px;
   text-align: center;
-  height: max-content;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 
-              0 0 0 8px rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 8px rgba(255, 255, 255, 0.4);
+
+  // Never let the card be wider than viewport minus padding
+  box-sizing: border-box;
 }
 
 .characterHeader {
   position: absolute;
-  top: -190px;
+  top: -110px;                // half of character height (250/2 = 125) - a little overlap
   left: 50%;
   transform: translateX(-50%);
-  width: 250px;
-  height: 250px;
+  width: 220px;
+  height: 220px;
   z-index: 3;
   pointer-events: none;
-  filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.3));
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
-    border-radius: 50%; /* Make the character image a circle to look good floating above the card */
+    border-radius: 50%;
     box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.8);
   }
 }
 
 .titleArea {
   margin-bottom: 30px;
-  margin-top: 50px; /* Leave space for the character above */
+  margin-top: 60px;           // leave room for character overlap inside the card
 
   h1 {
     font-size: 1.6rem;
@@ -76,9 +83,10 @@
     background: #f4f5f9;
     border-radius: 20px;
     padding: 15px 20px;
-    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05),
-                inset -3px -3px 7px rgba(255,255,255,1);
-    
+    box-shadow:
+      inset 2px 2px 5px rgba(0, 0, 0, 0.05),
+      inset -3px -3px 7px rgba(255, 255, 255, 1);
+
     .icon {
       color: #7b7b9f;
       margin-right: 15px;
@@ -149,12 +157,42 @@
   justify-content: center;
   color: #5b5b75;
   font-size: 0.8rem;
-  
-  &::before, &::after {
+
+  &::before,
+  &::after {
     content: '';
     flex: 1;
     height: 1px;
     background: rgba(0, 0, 0, 0.1);
     margin: 0 10px;
+  }
+}
+
+// ── Mobile — keep card vertically centered in the visible area ────────────────
+@media (max-width: 480px) {
+  .loginContainer {
+    // On small phones, tighten the top padding slightly
+    padding-top: 100px;
+    padding-bottom: 32px;
+    align-items: center;
+  }
+
+  .loginCard {
+    border-radius: 30px;
+    padding: 36px 22px;
+  }
+
+  .characterHeader {
+    width: 190px;
+    height: 190px;
+    top: -95px;
+  }
+
+  .titleArea {
+    margin-top: 50px;
+
+    h1 {
+      font-size: 1.4rem;
+    }
   }
 }

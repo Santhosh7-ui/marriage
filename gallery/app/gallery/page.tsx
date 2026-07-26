@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import CurvedFilmstrip from '@/app/components/gallery/CurvedFilmstrip';
 import GalleryPreview from '@/app/components/gallery/GalleryPreview';
 import CarouselView from '@/app/components/gallery/CarouselView';
@@ -11,26 +11,42 @@ export default function GalleryPage() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'curved' | 'carousel'>('curved');
   const [actionMessage, setActionMessage] = useState<string | null>(null);
 
+  // ── Timer ref to avoid leaking setTimeout on unmount ──────────────────────
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const showActionMessage = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setActionMessage(msg);
-    setTimeout(() => setActionMessage(null), 3000);
+    toastTimerRef.current = setTimeout(() => setActionMessage(null), 3000);
   };
 
+  // Clear timer on unmount
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  // ── Delete handler — fixed stale closure bug ───────────────────────────────
   const handleDeletePhoto = async (key: string) => {
     if (!window.confirm('Are you sure you want to delete this photo from the gallery?')) return;
     try {
       const res = await fetch(`/api/photos?key=${encodeURIComponent(key)}`, { method: 'DELETE' });
-      if (res.ok) {
-        showActionMessage('Photo deleted successfully');
-        setPhotos(prev => prev.filter(p => p !== key));
-        // Adjust selectedIndex if the deleted photo is the last one or earlier
-        setSelectedIndex(prev => (prev >= photos.length - 1 ? Math.max(0, photos.length - 2) : prev));
-      } else {
+      if (!res.ok) {
         alert('Failed to delete photo');
+        return;
       }
+      showActionMessage('Photo deleted successfully');
+      // Derive new index inside setPhotos so we always reference the latest array
+      setPhotos((prev) => {
+        const next = prev.filter((p) => p !== key);
+        setSelectedIndex((idx) => (idx >= next.length ? Math.max(0, next.length - 1) : idx));
+        return next;
+      });
     } catch (err) {
       console.error(err);
       alert('Failed to delete photo');
@@ -55,16 +71,17 @@ export default function GalleryPage() {
     }
   };
 
+  // ── Data fetching ──────────────────────────────────────────────────────────
   useEffect(() => {
     async function fetchPhotos() {
       try {
         const res = await fetch('/api/photos');
-        if (res.ok) {
-          const data = await res.json();
-          setPhotos(data.photos || []);
-        }
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        const data = await res.json();
+        setPhotos(data.photos || []);
       } catch (err) {
         console.error('Failed to load photos:', err);
+        setError('Could not load photos. Please try refreshing the page.');
       } finally {
         setLoading(false);
       }
@@ -72,7 +89,7 @@ export default function GalleryPage() {
     fetchPhotos();
   }, []);
 
-  // Keyboard navigation
+  // ── Keyboard navigation ────────────────────────────────────────────────────
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (photos.length === 0) return;
@@ -82,15 +99,33 @@ export default function GalleryPage() {
         setSelectedIndex((prev) => (prev - 1 + photos.length) % photos.length);
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [photos.length]);
 
+  // ── Render states ──────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className={styles.loadingState}>
         <div className={styles.loadingPulse}>Loading gallery...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.loadingState}>
+        <p style={{ color: '#ff6b6b', marginBottom: '1rem' }}>{error}</p>
+        <button
+          onClick={() => { setError(null); setLoading(true); window.location.reload(); }}
+          style={{
+            padding: '10px 24px', borderRadius: '50px',
+            background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.3)',
+            color: 'white', cursor: 'pointer', fontSize: '0.9rem',
+          }}
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -114,7 +149,7 @@ export default function GalleryPage() {
           background: 'rgba(0,0,0,0.8)', color: 'white', padding: '12px 24px',
           borderRadius: '50px', zIndex: 1000, backdropFilter: 'blur(10px)',
           border: '1px solid rgba(255,255,255,0.2)',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
         }}>
           {actionMessage}
         </div>
@@ -169,7 +204,7 @@ export default function GalleryPage() {
                 >
                   <img
                     src={`/api/image?key=${encodeURIComponent(photoKey)}&thumb=true`}
-                    alt={`Thumbnail ${index}`}
+                    alt={`Thumbnail ${index + 1}`}
                     className={styles.mobileThumbImg}
                     loading="lazy"
                   />

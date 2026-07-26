@@ -28,7 +28,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (data.success) {
-        router.push('/gallery');
+        router.push('/');
       } else {
         setError(data.error || 'Incorrect password');
       }
