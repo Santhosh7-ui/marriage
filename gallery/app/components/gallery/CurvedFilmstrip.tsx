@@ -62,9 +62,10 @@ export default function CurvedFilmstrip({ photos, selectedIndex, onSelect }: Cur
               {/* Photo Thumbnail */}
               <div className={`${styles.thumbFrame} ${offset === 0 ? styles['thumbFrame--active'] : ''}`}>
                 <img
-                  src={`/api/image?key=${encodeURIComponent(photoKey)}`}
+                  src={`/api/image?key=${encodeURIComponent(photoKey)}&thumb=true`}
                   alt={`Thumbnail ${index}`}
                   className={styles.thumbImg}
+                  loading={offset === 0 ? "eager" : "lazy"}
                 />
               </div>
 

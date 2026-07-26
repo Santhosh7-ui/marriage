@@ -294,10 +294,12 @@ export function initAnimations() {
       vy: number;
       friction: number;
       spring: number;
+      isPortrait: boolean;
 
       constructor(x: number, y: number, isPortrait = false) {
         this.baseX = x;
         this.baseY = y;
+        this.isPortrait = isPortrait;
         this.x = x + (Math.random() - 0.5) * 80;
         this.y = y + (Math.random() - 0.5) * 80;
         this.size = Math.random() * (isPortrait ? 2.5 : 1.5) + (isPortrait ? 1.2 : 0.6);
@@ -348,8 +350,55 @@ export function initAnimations() {
         // Draw slightly smaller particles for a finer look
         ctx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
         ctx.fill();
+        
+        if (this.isPortrait) {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
     }
+
+    class FallingParticle {
+      x: number;
+      y: number;
+      size: number;
+      color: string;
+      vy: number;
+      vx: number;
+      life: number;
+      maxLife: number;
+
+      constructor(x: number, y: number, color: string) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 2 + 0.5;
+        this.color = color;
+        this.vy = Math.random() * 1.5 + 0.5;
+        this.vx = (Math.random() - 0.5) * 1;
+        this.life = 0;
+        this.maxLife = Math.random() * 100 + 50;
+      }
+
+      update() {
+        this.y += this.vy;
+        this.x += Math.sin(this.life * 0.05) * 0.5 + this.vx;
+        this.life++;
+      }
+
+      draw() {
+        if (!ctx) return;
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = 1 - (this.life / this.maxLife);
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      }
+    }
+
+    let fallingParticles: FallingParticle[] = [];
 
     function createText() {
       particles = [];
@@ -385,9 +434,9 @@ export function initAnimations() {
       offCtx.textBaseline = 'middle';
 
       if (isPortrait) {
-        offCtx.fillText("Santhosh &", width / 2, height / 2 - fontSize * 0.7);
-        offCtx.fillText("💍", width / 2, height / 2 + fontSize * 0.1);
-        offCtx.fillText("Ambika", width / 2, height / 2 + fontSize * 0.9);
+        offCtx.fillText("Santhosh &", width / 2, height / 2 - fontSize * 1.2);
+        offCtx.fillText("💍", width / 2, height / 2);
+        offCtx.fillText("Ambika", width / 2, height / 2 + fontSize * 1.2);
       } else {
         offCtx.fillText("Santhosh 💍 Ambika", width / 2, height / 2);
       }
@@ -420,6 +469,22 @@ export function initAnimations() {
         p.update();
         p.draw();
       });
+
+      // Spawn falling bubbles randomly
+      if (Math.random() < 0.2 && particles.length > 0) {
+        const p = particles[Math.floor(Math.random() * particles.length)];
+        fallingParticles.push(new FallingParticle(p.x, p.y, p.color));
+      }
+
+      for (let i = fallingParticles.length - 1; i >= 0; i--) {
+        const fp = fallingParticles[i];
+        fp.update();
+        fp.draw();
+        if (fp.life >= fp.maxLife) {
+          fallingParticles.splice(i, 1);
+        }
+      }
+
       animationFrameId = requestAnimationFrame(animate);
     }
 

@@ -168,9 +168,10 @@ export default function GalleryPage() {
                   className={`${styles.mobileThumb} ${index === selectedIndex ? styles['mobileThumb--active'] : ''}`}
                 >
                   <img
-                    src={`/api/image?key=${encodeURIComponent(photoKey)}`}
+                    src={`/api/image?key=${encodeURIComponent(photoKey)}&thumb=true`}
                     alt={`Thumbnail ${index}`}
                     className={styles.mobileThumbImg}
+                    loading="lazy"
                   />
                 </div>
               ))}

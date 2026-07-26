@@ -12,15 +12,32 @@ const aws = new AwsClient({
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const key = searchParams.get('key');
-  if (!key) return new NextResponse('Missing key', { status: 400 });
+  const originalKey = searchParams.get('key');
+  const isThumb = searchParams.get('thumb') === 'true';
+
+  if (!originalKey) return new NextResponse('Missing key', { status: 400 });
+
+  let key = originalKey;
+  if (isThumb) {
+    const filename = originalKey.split('/').pop();
+    key = `images/thumbnails/${filename}`;
+  }
 
   try {
     const bucketName = process.env.R2_BUCKET_NAME || 'wedding-photos';
     const accountId = process.env.R2_ACCOUNT_ID;
-    const url = new URL(`https://${accountId}.r2.cloudflarestorage.com/${bucketName}/${encodeURIComponent(key)}`);
     
-    const response = await aws.fetch(url);
+    const fetchFromR2 = async (targetKey: string) => {
+      const url = new URL(`https://${accountId}.r2.cloudflarestorage.com/${bucketName}/${encodeURIComponent(targetKey)}`);
+      return await aws.fetch(url);
+    };
+
+    let response = await fetchFromR2(key);
+    
+    // If thumbnail doesn't exist, gracefully fallback to the original image
+    if (!response.ok && isThumb) {
+      response = await fetchFromR2(originalKey);
+    }
     
     if (!response.ok) {
       throw new Error(`Failed to fetch image: ${response.statusText}`);
