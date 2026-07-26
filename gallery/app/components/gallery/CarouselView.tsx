@@ -47,21 +47,32 @@ export default function CarouselView({ photos, selectedIndex, onSelect, onDelete
           const zIndex = 100 - absOffset;
 
           return (
-            <motion.div
-              key={index}
-              className={styles.card}
-              style={{
-                width: 'clamp(300px, 35vw, 460px)',
-                height: 'clamp(480px, 65vh, 760px)',
-                zIndex,
-                transformStyle: 'preserve-3d',
-              }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ x, z, rotateY, opacity, scale: isCenter ? 1 : 0.95 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ type: 'tween', duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-              onClick={() => onSelect(index)}
-            >
+              <motion.div
+                key={index}
+                className={styles.card}
+                style={{
+                  width: 'clamp(300px, 35vw, 460px)',
+                  height: 'clamp(480px, 65vh, 760px)',
+                  zIndex,
+                  transformStyle: 'preserve-3d',
+                }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ x, z, rotateY, opacity, scale: isCenter ? 1 : 0.95 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: 'tween', duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                onClick={() => onSelect(index)}
+                drag={isCenter ? "x" : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(e, { offset }) => {
+                  const swipe = offset.x;
+                  if (swipe < -50) {
+                    onSelect((index + 1) % photos.length);
+                  } else if (swipe > 50) {
+                    onSelect((index - 1 + photos.length) % photos.length);
+                  }
+                }}
+              >
               {/* Dimmer overlay for inactive items */}
               {!isCenter && <div className={styles.dimmer} />}
 
@@ -70,6 +81,7 @@ export default function CarouselView({ photos, selectedIndex, onSelect, onDelete
                 alt={`Gallery ${index}`}
                 className={styles.photo}
                 draggable={false}
+                loading={isCenter ? "eager" : "lazy"}
               />
 
               {/* Optional: Number Badge */}
@@ -77,31 +89,7 @@ export default function CarouselView({ photos, selectedIndex, onSelect, onDelete
                 {index + 1} / {photos.length}
               </div>
 
-              {/* Action Buttons (Only show for active card) */}
-              {isCenter && (
-                <div className={styles.actionButtons}>
-                  <button 
-                    className={`${styles.actionBtn} ${styles.favoriteBtn}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onFavorite?.(photoKey);
-                    }}
-                    title="Favorite this photo"
-                  >
-                    ❤️
-                  </button>
-                  <button 
-                    className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDelete?.(photoKey);
-                    }}
-                    title="Delete this photo"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              )}
+              {/* Action Buttons (Removed as requested) */}
 
               {/* Details Overlay (Only active card) */}
               {isCenter && (

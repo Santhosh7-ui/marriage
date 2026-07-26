@@ -8,7 +8,7 @@ import styles from './AlbumPage.module.scss';
 
 const FlipBook = HTMLFlipBook as any;
 
-const Page = React.forwardRef((props: any, ref) => {
+const Page = React.forwardRef((props: { image: string, number: number }, ref) => {
   return (
     <div className={styles.flipbookPage} ref={ref as any} data-density="soft">
       <div className={styles.flipbookPage}>

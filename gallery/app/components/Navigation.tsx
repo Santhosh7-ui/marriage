@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import AntigravityLogo from './AntigravityLogo';
 import styles from './Navigation.module.scss';
 
@@ -43,36 +44,36 @@ export default function Navigation({ title, viewMode, setViewMode, isGallery }: 
         {/* Desktop View */}
         <div className={styles.desktopRow}>
           {/* Logo / Brand (Left) */}
-          <a href="/">
+          <Link href="/">
             <AntigravityLogo />
-          </a>
+          </Link>
 
           {/* Centered Navigation Links */}
           <nav className={styles.nav}>
-            <a
+            <Link
               href="/"
               className={`${styles.navLink} ${isHomeActive ? styles['navLink--active'] : ''}`}
             >
               Home
-            </a>
-            <a
+            </Link>
+            <Link
               href="/gallery"
               className={`${styles.navLink} ${isGalleryActive ? styles['navLink--active'] : ''}`}
             >
               Gallery
-            </a>
-            <a
+            </Link>
+            <Link
               href="/album"
               className={`${styles.navLink} ${isWeddingActive ? styles['navLink--active'] : ''}`}
             >
               Wedding Album
-            </a>
-            <a
+            </Link>
+            <Link
               href="/album?type=reception"
               className={`${styles.navLink} ${isReceptionActive ? styles['navLink--active'] : ''}`}
             >
               Reception Album
-            </a>
+            </Link>
           </nav>
 
           {/* Pill Action Button (Right) */}
@@ -82,18 +83,18 @@ export default function Navigation({ title, viewMode, setViewMode, isGallery }: 
                 {pillLabel}
               </button>
             ) : (
-              <a href={pillHref} className={styles.pill}>
+              <Link href={pillHref} className={styles.pill}>
                 {pillLabel}
-              </a>
+              </Link>
             )}
           </div>
         </div>
 
         {/* Mobile View — Hamburger & Brand */}
         <div className={styles.mobileRow}>
-          <a href="/" className={styles.mobileBrand}>
+          <Link href="/" className={styles.mobileBrand}>
             S &amp; A
-          </a>
+          </Link>
 
           <div className={styles.mobileActions}>
             {isGallery && setViewMode && viewMode && (
@@ -126,18 +127,18 @@ export default function Navigation({ title, viewMode, setViewMode, isGallery }: 
             className={styles.mobileOverlay}
           >
             <nav className={styles.mobileNav}>
-              <a href="/" onClick={toggleMenu} className={styles.mobileNavLink}>
+              <Link href="/" onClick={toggleMenu} className={styles.mobileNavLink}>
                 Home
-              </a>
-              <a href="/gallery" onClick={toggleMenu} className={styles.mobileNavLink}>
+              </Link>
+              <Link href="/gallery" onClick={toggleMenu} className={styles.mobileNavLink}>
                 Gallery
-              </a>
-              <a href="/album" onClick={toggleMenu} className={styles.mobileNavLink}>
+              </Link>
+              <Link href="/album" onClick={toggleMenu} className={styles.mobileNavLink}>
                 3D Wedding Album
-              </a>
-              <a href="/album?type=reception" onClick={toggleMenu} className={styles.mobileNavLink}>
+              </Link>
+              <Link href="/album?type=reception" onClick={toggleMenu} className={styles.mobileNavLink}>
                 3D Reception Album
-              </a>
+              </Link>
             </nav>
           </motion.div>
         )}

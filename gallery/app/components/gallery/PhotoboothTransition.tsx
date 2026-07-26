@@ -16,7 +16,7 @@ const PhotoboothTransition = () => {
         const data = await response.json();
         if (data.photos && data.photos.length > 0) {
           // Convert keys to api/image URLs
-          const urls = data.photos.map((key: string) => `/api/image?key=${encodeURIComponent(key)}`);
+          const urls = data.photos.map((key: string) => `/api/image?key=${encodeURIComponent(key)}&thumb=true`);
           setPhotos(urls);
         } else {
           // Fallback if no favorites are found
@@ -55,7 +55,7 @@ const PhotoboothTransition = () => {
       {/* Booth UI */}
       <div className={styles.boothUi}>
         <div className={styles.dispenserSign}>
-          <h2>mar &amp; ma</h2>
+          <h2>Mrs. &amp; Mr.</h2>
           <p>Photos delivered here<br/>in 4 minutes</p>
           <div className={styles.arrow}></div>
         </div>

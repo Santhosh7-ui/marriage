@@ -57,6 +57,7 @@ export function initAnimations() {
   (function initScrollReveals() {
     document.querySelectorAll('.reveal-text[data-split]').forEach((el) => {
       const element = el as HTMLElement;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const splitType = (element.dataset.split || 'words') as any;
       const split = new SplitType(element, { types: splitType });
       const targets = splitType === 'chars' ? split.chars : split.words;
@@ -162,6 +163,7 @@ export function initAnimations() {
 
   /* ─── 12. SECTION-WIDE BACKGROUND PARALLAX ────────────────────── */
   (function initParallax() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     gsap.utils.toArray('.glow-orb').forEach((orb: any, i) => {
       gsap.to(orb, {
         y: i % 2 === 0 ? -80 : 80,
@@ -278,7 +280,7 @@ export function initAnimations() {
     if (!ctx) return;
 
     let particles: Particle[] = [];
-    let mouse = { x: -9999, y: -9999, radius: 100 };
+    const mouse = { x: -9999, y: -9999, radius: 100 };
     let width: number, height: number;
 
     const colors = ['#50b79e', '#77d4c0', '#d4af37', '#e6c875', '#b39ddb', '#ffffff'];
@@ -294,10 +296,12 @@ export function initAnimations() {
       vy: number;
       friction: number;
       spring: number;
+      isPortrait: boolean;
 
       constructor(x: number, y: number, isPortrait = false) {
         this.baseX = x;
         this.baseY = y;
+        this.isPortrait = isPortrait;
         this.x = x + (Math.random() - 0.5) * 80;
         this.y = y + (Math.random() - 0.5) * 80;
         this.size = Math.random() * (isPortrait ? 2.5 : 1.5) + (isPortrait ? 1.2 : 0.6);
@@ -318,16 +322,16 @@ export function initAnimations() {
       }
 
       update() {
-        let dx = mouse.x - this.x;
-        let dy = mouse.y - this.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance < mouse.radius) {
-          let forceDirectionX = dx / distance;
-          let forceDirectionY = dy / distance;
-          let force = (mouse.radius - distance) / mouse.radius;
-          let directionX = forceDirectionX * force * -7;
-          let directionY = forceDirectionY * force * -7;
+          const forceDirectionX = dx / distance;
+          const forceDirectionY = dy / distance;
+          const force = (mouse.radius - distance) / mouse.radius;
+          const directionX = forceDirectionX * force * -7;
+          const directionY = forceDirectionY * force * -7;
 
           this.vx += directionX;
           this.vy += directionY;
@@ -348,8 +352,55 @@ export function initAnimations() {
         // Draw slightly smaller particles for a finer look
         ctx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
         ctx.fill();
+        
+        if (this.isPortrait) {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
     }
+
+    class FallingParticle {
+      x: number;
+      y: number;
+      size: number;
+      color: string;
+      vy: number;
+      vx: number;
+      life: number;
+      maxLife: number;
+
+      constructor(x: number, y: number, color: string) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 2 + 0.5;
+        this.color = color;
+        this.vy = Math.random() * 1.5 + 0.5;
+        this.vx = (Math.random() - 0.5) * 1;
+        this.life = 0;
+        this.maxLife = Math.random() * 100 + 50;
+      }
+
+      update() {
+        this.y += this.vy;
+        this.x += Math.sin(this.life * 0.05) * 0.5 + this.vx;
+        this.life++;
+      }
+
+      draw() {
+        if (!ctx) return;
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = 1 - (this.life / this.maxLife);
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      }
+    }
+
+    const fallingParticles: FallingParticle[] = [];
 
     function createText() {
       particles = [];
@@ -385,9 +436,9 @@ export function initAnimations() {
       offCtx.textBaseline = 'middle';
 
       if (isPortrait) {
-        offCtx.fillText("Santhosh &", width / 2, height / 2 - fontSize * 0.7);
-        offCtx.fillText("💍", width / 2, height / 2 + fontSize * 0.1);
-        offCtx.fillText("Ambika", width / 2, height / 2 + fontSize * 0.9);
+        offCtx.fillText("Santhosh &", width / 2, height / 2 - fontSize * 1.2);
+        offCtx.fillText("💍", width / 2, height / 2);
+        offCtx.fillText("Ambika", width / 2, height / 2 + fontSize * 1.2);
       } else {
         offCtx.fillText("Santhosh 💍 Ambika", width / 2, height / 2);
       }
@@ -420,6 +471,22 @@ export function initAnimations() {
         p.update();
         p.draw();
       });
+
+      // Spawn falling bubbles randomly
+      if (Math.random() < 0.2 && particles.length > 0) {
+        const p = particles[Math.floor(Math.random() * particles.length)];
+        fallingParticles.push(new FallingParticle(p.x, p.y, p.color));
+      }
+
+      for (let i = fallingParticles.length - 1; i >= 0; i--) {
+        const fp = fallingParticles[i];
+        fp.update();
+        fp.draw();
+        if (fp.life >= fp.maxLife) {
+          fallingParticles.splice(i, 1);
+        }
+      }
+
       animationFrameId = requestAnimationFrame(animate);
     }
 
@@ -432,14 +499,18 @@ export function initAnimations() {
       mouse.y = clientY - rect.top;
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     canvas.addEventListener('mousemove', trackMouse as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     canvas.addEventListener('touchmove', trackMouse as any, { passive: true });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     canvas.addEventListener('touchstart', trackMouse as any, { passive: true });
 
     const resetMouse = () => { mouse.x = -9999; mouse.y = -9999; };
     canvas.addEventListener('mouseleave', resetMouse);
     canvas.addEventListener('touchend', resetMouse);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let resizeTimer: any;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);

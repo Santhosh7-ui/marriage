@@ -42,23 +42,7 @@ export default function GalleryPreview({ photoKey, title, date, totalPhotos, onD
                   {title} • {totalPhotos} Fotos
                 </div>
 
-                {/* Action Buttons */}
-                <div className={styles.actionButtons}>
-                  <button 
-                    className={`${styles.actionBtn} ${styles.favoriteBtn}`}
-                    onClick={() => onFavorite?.(photoKey)}
-                    title="Favorite this photo"
-                  >
-                    ❤️
-                  </button>
-                  <button 
-                    className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                    onClick={() => onDelete?.(photoKey)}
-                    title="Delete this photo"
-                  >
-                    🗑️
-                  </button>
-                </div>
+                {/* Action Buttons (Removed as requested) */}
               </motion.div>
             </AnimatePresence>
           </div>

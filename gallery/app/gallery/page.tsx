@@ -125,7 +125,7 @@ export default function GalleryPage() {
         title="Santhosh & Ambika"
         isGallery={true}
         viewMode={viewMode}
-        setViewMode={(mode: any) => setViewMode(mode)}
+        setViewMode={(mode: string) => setViewMode(mode as 'carousel' | 'curved')}
       />
 
       {/* Main Content Area */}
@@ -168,9 +168,10 @@ export default function GalleryPage() {
                   className={`${styles.mobileThumb} ${index === selectedIndex ? styles['mobileThumb--active'] : ''}`}
                 >
                   <img
-                    src={`/api/image?key=${encodeURIComponent(photoKey)}`}
+                    src={`/api/image?key=${encodeURIComponent(photoKey)}&thumb=true`}
                     alt={`Thumbnail ${index}`}
                     className={styles.mobileThumbImg}
+                    loading="lazy"
                   />
                 </div>
               ))}
