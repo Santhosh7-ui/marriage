@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AntigravityLogo from './AntigravityLogo';
 import styles from './Navigation.module.scss';
@@ -17,6 +17,16 @@ interface NavigationProps {
 export default function Navigation({ title, viewMode, setViewMode, isGallery }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+      router.push('/login');
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -74,6 +84,13 @@ export default function Navigation({ title, viewMode, setViewMode, isGallery }: 
             >
               Reception Album
             </Link>
+            <button
+              onClick={handleLogout}
+              className={styles.navLink}
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 'inherit', fontFamily: 'inherit' }}
+            >
+              Logout
+            </button>
           </nav>
 
           {/* Pill Action Button (Right) */}
@@ -139,6 +156,13 @@ export default function Navigation({ title, viewMode, setViewMode, isGallery }: 
               <Link href="/album?type=reception" onClick={toggleMenu} className={styles.mobileNavLink}>
                 3D Reception Album
               </Link>
+              <button 
+                onClick={() => { toggleMenu(); handleLogout(); }} 
+                className={styles.mobileNavLink}
+                style={{ background: 'transparent', border: 'none', textAlign: 'left', width: '100%' }}
+              >
+                Logout
+              </button>
             </nav>
           </motion.div>
         )}

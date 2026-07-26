@@ -14,7 +14,7 @@ export default function Home() {
       ═══════════════════════════════════════════════ */}
       <footer className="site-footer">
         <div className="footer-names">Santhosh ❤️ Ambika</div>
-        <div className="footer-date">22 · 03 · 2026</div>
+        <div className="footer-date">17 · 03 · 2024</div>
         <div className="footer-divider" aria-hidden="true"></div>
         <p className="footer-note">Made with love ✦</p>
       </footer>
